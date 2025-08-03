@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/store/store";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,

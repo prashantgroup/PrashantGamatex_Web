@@ -1,16 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { changePassword, login } from "@/services/auth";
+import { useUserStore } from "@/store/store";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { login as loginService, logout as logoutService } from "@/services/auth";
-import { useAuthStore } from "@/store/auth";
-import { LoginData, AuthResponse, ErrorResponse } from "@/types/auth";
+import { AuthResponse, LoginData, ChangePasswordData } from "@/types/auth";
+import { ErrorResponse } from "@/types/query";
+import { toast } from "sonner";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useUserStore((state) => state.setUser);
 
   return useMutation<AuthResponse, ErrorResponse, LoginData>({
-    mutationFn: loginService,
+    mutationFn: (data: LoginData) => {
+      return login(data);
+    },
     onSuccess: (data) => {
       setUser({
         data: {
@@ -21,41 +26,63 @@ export const useLogin = () => {
         },
         token: data.token,
       });
-      
-      // Store token in localStorage for API requests
-      localStorage.setItem("auth-token", data.token);
-      
       router.push("/dashboard");
       queryClient.invalidateQueries({
         queryKey: ["auth"],
       });
     },
     onError: (error) => {
-      console.error("Login error:", error);
+      toast.error(error.errorMessage);
     },
   });
 };
 
 export const useLogout = () => {
-  const queryClient = useQueryClient();
+  const clearUser = useUserStore((state) => state.clearUser);
+  const clearToken = useUserStore((state) => state.clearToken);
   const router = useRouter();
-  const logout = useAuthStore((state) => state.logout);
+  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: logoutService,
-    onSuccess: () => {
-      logout();
-      localStorage.removeItem("auth-token");
+  const logout = () => {
+    clearUser();
+    clearToken();
+    queryClient.invalidateQueries({
+      queryKey: ["auth"],
+    });
+    router.push("/login");
+  };
+
+  return logout;
+};
+
+export const useAuth = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const user = useUserStore((state) => state.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && user.token) {
+      setIsAuthenticated(true);
+    } else {
       router.push("/login");
-      queryClient.clear();
+    }
+  }, [user, router]);
+
+  return { isAuthenticated, user };
+};
+
+export const useChangePassword = () => {
+  const logout = useLogout();
+  const user = useUserStore((state) => state.user);
+
+  return useMutation<unknown, ErrorResponse, ChangePasswordData>({
+    mutationFn: (data: ChangePasswordData) => changePassword(data, user?.token || ""),
+    onSuccess: () => {
+      toast.success("Password changed successfully");
+      logout();
     },
     onError: (error) => {
-      // Even if logout API fails, clear local state
-      logout();
-      localStorage.removeItem("auth-token");
-      router.push("/login");
-      queryClient.clear();
-      console.error("Logout error:", error);
+      toast.error(error.errorMessage);
     },
   });
 }; 

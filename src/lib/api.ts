@@ -1,41 +1,13 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://pgplcrm.prasadsos.co:8091";
+
+const client = axios.create({
+  baseURL: API_URL,
   headers: {
-    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+    "Cache-Control": "no-cache",
   },
 });
 
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("auth-token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("auth-token");
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
-export default api; 
+export default client; 

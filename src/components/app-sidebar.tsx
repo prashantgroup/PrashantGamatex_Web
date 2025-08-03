@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { useAuthStore } from "@/store/auth"
+import { useAuthStore } from "@/store/store"
 import { useLogout } from "@/hooks/useAuth"
 import { 
   Home, 
