@@ -1,3 +1,4 @@
+"use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changePassword, login } from "@/services/auth";
 import { useUserStore } from "@/store/store";

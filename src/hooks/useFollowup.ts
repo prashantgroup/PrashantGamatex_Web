@@ -1,3 +1,4 @@
+"use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -58,7 +59,7 @@ export const useInsertInquiryFollowup = () => {
           ),
       });
       toast.success("Followup Added Successfully");
-      router.push("/followup");
+      router.push("/followups");
     },
     onError: (error) => {
       toast.error(error.errorMessage);
@@ -82,7 +83,7 @@ export const useInsertQuotationFollowup = () => {
           ),
       });
       toast.success("Followup Added Successfully");
-      router.back();
+      router.push("/followups");
     },
     onError: (error) => {
       toast.error(error.errorMessage);

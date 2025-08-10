@@ -2,7 +2,7 @@
 import { ExpenseObject } from "@/types/expense";
 import { ErrorResponse } from "@/types/query";
 
-export const getAllExpenses = async (token: string): Promise<ExpenseObject> => {
+export const getAllExpenses = async (token: string): Promise<ExpenseObject[]> => {
   try {
     const response = await client.get("/user/expense/get", {
       headers: {

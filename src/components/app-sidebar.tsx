@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { useAuthStore } from "@/store/store"
+import { useUserStore } from "@/store/store"
 import { useLogout } from "@/hooks/useAuth"
 import { 
   Home, 
@@ -48,11 +48,11 @@ const navigationItems = [
 ]
 
 export function AppSidebar() {
-  const { user } = useAuthStore()
-  const logoutMutation = useLogout()
+  const user = useUserStore((state) => state.user)
+  const logout = useLogout()
 
   const handleLogout = () => {
-    logoutMutation.mutate()
+    logout()
   }
 
   return (
@@ -105,11 +105,10 @@ export function AppSidebar() {
             variant="outline"
             size="sm"
             onClick={handleLogout}
-            disabled={logoutMutation.isPending}
             className="w-full justify-start"
           >
             <LogOut className="mr-2 size-4" />
-            {logoutMutation.isPending ? "Logging out..." : "Logout"}
+            Logout
           </Button>
         </div>
       </SidebarFooter>

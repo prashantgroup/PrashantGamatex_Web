@@ -1,4 +1,5 @@
- import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+"use client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getAllExpenses, insertExpense } from "@/services/expense";
@@ -30,7 +31,7 @@ export const useExpenseInsert = () => {
 export const useExpenses = () => {
   const user = useUserStore((state) => state.user);
   
-  return useQuery<ExpenseObject, ErrorResponse>({
+  return useQuery<ExpenseObject[], ErrorResponse>({
     queryKey: ["getExpenses"],
     queryFn: () => getAllExpenses(user?.token || ""),
     enabled: !!user?.token,
