@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/store/store";
+import { useUserStore } from "@/store/store";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/sidebar";
 
 export default function DashboardPage() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useUserStore();
 
-  if (!isAuthenticated || !user) {
+  if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">

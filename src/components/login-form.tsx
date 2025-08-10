@@ -121,7 +121,7 @@ export function LoginForm({
               <SelectItem value="">Select a company</SelectItem>
               <SelectItem value="PrashantGamatex">Prashant Gamatex</SelectItem>
               <SelectItem value="WestPoint">West Point</SelectItem>
-              <SelectItem value="Serber">Serber</SelectItem>
+              <SelectItem value="Ferber">Ferber</SelectItem>
             </SelectContent>
           </Select>
           {errors.company && (
