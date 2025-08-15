@@ -2,13 +2,31 @@
 
 import React, { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLeads } from "@/hooks/useLeads";
 import { LeadData } from "@/types/lead";
 import Link from "next/link";
+import { useUserStore } from "@/store/store";
+import { AppSidebar } from "@/components/app-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Search, Building, Phone, Plus, Calendar, Eye, Edit } from "lucide-react";
 
 export default function LeadsListPage() {
+  const { user } = useUserStore();
   const { data, isLoading, error } = useLeads();
   const [search, setSearch] = useState("");
 
@@ -25,62 +43,158 @@ export default function LeadsListPage() {
     });
   }, [data, search]);
 
-  return (
-    <div className="p-4 max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">Leads</h1>
-        <p className="text-sm text-muted-foreground">List of all leads</p>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Input
-          placeholder="Search company, product or contact..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-md"
-        />
-        <Link href="/leads/add">
-          <Button>Add Lead</Button>
-        </Link>
-      </div>
-
-      {isLoading && <div>Loading...</div>}
-      {error && (
-        <div className="text-destructive">{error.errorMessage}</div>
-      )}
-
-      {!isLoading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredLeads.map((lead) => (
-            <Card key={lead.ReferenceTransaction_2361Id} className="p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-lg">
-                    {lead.UDF_CompanyName_2361}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {lead.UDF_Product_2361}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    By {lead.UserName} • {new Date(lead.DocumentDate).toLocaleDateString("en-GB")}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Link href={`/leads/${lead.ReferenceTransaction_2361Id}`}>
-                    <Button variant="secondary" size="sm">Open</Button>
-                  </Link>
-                  <Link href={`/leads/${lead.ReferenceTransaction_2361Id}/edit`}>
-                    <Button size="sm">Edit</Button>
-                  </Link>
-                </div>
-              </div>
-            </Card>
-          ))}
-          {filteredLeads.length === 0 && (
-            <div className="text-sm text-muted-foreground">No leads found.</div>
-          )}
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground">Please log in to access this page.</p>
         </div>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center border-b">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/dashboard">
+                    Dashboard
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Leads</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-auto p-4 md:p-6">
+          <div className="mx-auto max-w-7xl space-y-6">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
+                <p className="text-sm text-muted-foreground">Manage and track all business leads</p>
+              </div>
+              <Link href="/leads/add">
+                <Button className="shrink-0">
+                  <Plus className="mr-1 h-4 w-4" />
+                  Add New Lead
+                </Button>
+              </Link>
+            </div>
+
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search company, product or contact person..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            {isLoading && (
+              <div className="flex items-center justify-center py-8">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+                <span className="ml-2">Loading leads...</span>
+              </div>
+            )}
+            
+            {error && (
+              <Card className="border-destructive">
+                <CardContent className="p-4 text-destructive">
+                  <p>{error.errorMessage}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {!isLoading && !error && (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredLeads.map((lead) => (
+                  <Card key={lead.ReferenceTransaction_2361Id} className="transition-all hover:shadow-md">
+                    <CardHeader className="p-4 pb-2">
+                      <CardTitle className="flex items-center">
+                        <Building className="mr-2 h-5 w-5 text-primary" />
+                        {lead.UDF_CompanyName_2361}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0">
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1 space-y-1">
+                            <div className="flex items-center text-sm">
+                              <Phone className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                              <span className="font-medium">{lead.UDF_ContactPerson_2361}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{lead.UDF_Product_2361}</p>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <div className="mb-1 rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                              {lead.UDF_LeadSource_2361}
+                            </div>
+                            <div className="flex items-center text-xs text-muted-foreground">
+                              <Calendar className="mr-1 h-3 w-3" />
+                              {new Date(lead.DocumentDate).toLocaleDateString("en-GB")}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="text-xs text-muted-foreground">
+                            Added by {lead.UserName}
+                          </div>
+                          <div className="flex gap-2">
+                            <Link href={`/leads/${lead.ReferenceTransaction_2361Id}`}>
+                              <Button size="sm" variant="outline">
+                                <Eye className="h-3.5 w-3.5" />
+                                <span className="sr-only sm:not-sr-only sm:ml-1.5">View</span>
+                              </Button>
+                            </Link>
+                            <Link href={`/leads/${lead.ReferenceTransaction_2361Id}/edit`}>
+                              <Button size="sm" variant="default">
+                                <Edit className="h-3.5 w-3.5" />
+                                <span className="sr-only sm:not-sr-only sm:ml-1.5">Edit</span>
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                
+                {filteredLeads.length === 0 && (
+                  <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                    <Search className="h-10 w-10 text-muted-foreground/50" />
+                    <h3 className="mt-4 text-lg font-semibold">No leads found</h3>
+                    <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                      Try adjusting your search or create a new lead
+                    </p>
+                    <Link href="/leads/add">
+                      <Button>
+                        <Plus className="mr-1 h-4 w-4" />
+                        Add New Lead
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

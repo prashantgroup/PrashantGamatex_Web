@@ -90,7 +90,7 @@ export type LeadReminderData = {
 
 export type LeadUpdate = {
   ReferenceTransaction_2361FollowupId: number;
-  ReferenceTransaction_2361Id: number;
+  ReferenceTransactionId: number;
   NextVisitDateTime: Date;
   FollowupStatus: string;
   FollowupDateTime: Date;

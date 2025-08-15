@@ -17,9 +17,9 @@ import { useUserStore } from "@/store/store"
 import { useLogout } from "@/hooks/useAuth"
 import { 
   Home, 
-  BarChart3, 
-  Package, 
-  Settings, 
+  Wallet, 
+  ListChecks, 
+  Users, 
   LogOut,
   Building2 
 } from "lucide-react"
@@ -31,19 +31,19 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Reports",
-    url: "/reports",
-    icon: BarChart3,
+    title: "Expenses",
+    url: "/expenses",
+    icon: Wallet,
   },
   {
-    title: "Inventory",
-    url: "/inventory", 
-    icon: Package,
+    title: "Followups",
+    url: "/followups",
+    icon: ListChecks,
   },
   {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
+    title: "Leads",
+    url: "/leads",
+    icon: Users,
   },
 ]
 

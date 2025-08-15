@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem } from "@/components/ui/select";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useConstants } from "@/hooks/useConstants";
-import { useLeads, useUpdateLead } from "@/hooks/useLeads";
-import { LeadData, LeadUpdateData } from "@/types/lead";
+import { useInsertLead } from "@/hooks/useLeads";
+import { LeadInsertData } from "@/types/lead";
 import { useUserStore } from "@/store/store";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -46,11 +46,14 @@ import {
   Phone,
   Globe,
   Clock,
-  FileText
+  FileText,
+  Plus
 } from "lucide-react";
+import { toast } from "sonner";
 
 const schema = z.object({
   currency: z.string().min(1, "Currency is required"),
+  documentDate: z.date(),
   customerCompanyName: z.string().min(1, "Customer Company Name is required"),
   contactPerson: z.string().min(1, "Contact Person is required"),
   designation: z.string().min(1, "Designation is required"),
@@ -69,63 +72,56 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export default function LeadEditPage() {
+export default function AddLeadPage() {
   const { user } = useUserStore();
-  const params = useParams<{ leadId: string }>();
   const router = useRouter();
-  const id = Number(params.leadId);
-  const { data: leads } = useLeads();
   const constants = useConstants();
-  const updateLead = useUpdateLead();
-
-  const current = useMemo<LeadData | undefined>(
-    () => leads?.find((l) => l.ReferenceTransaction_2361Id === id),
-    [leads, id]
-  );
+  const insertLead = useInsertLead();
+  const [files, setFiles] = useState<FileList | null>(null);
 
   const {
     control,
     register,
-    setValue,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
-
-  useEffect(() => {
-    if (!current) return;
-    setValue("currency", current.CurrencyName || "");
-    setValue("customerCompanyName", current.UDF_CompanyName_2361 || "");
-    setValue("contactPerson", current.UDF_ContactPerson_2361 || "");
-    setValue("designation", current.UDF_Designation_2361 || "");
-    setValue("mobileNo", current.UDF_MobileNo_2361 || "");
-    setValue("address", current.UDF_CustomerAdd_2361 || "");
-    setValue("emailId", current.UDF_EmailId_2361 || "");
-    setValue("product", current.UDF_Product_2361 || "");
-    setValue("leadSource", current.UDF_LeadSource_2361 || "");
-    setValue("competition", current.UDF_CompetitionWith_2361 || "");
-    setValue("timeFrame", current.UDF_TimeFrame_2361 || "");
-    setValue(
-      "leadRemindDate",
-      new Date(current.UDF_LeadRemindDate_2361 || new Date())
-    );
-    setValue(
-      "customerApplication",
-      current.UDF_CustomerApplication_2361 || ""
-    );
-    setValue(
-      "customerExistingMachine",
-      current.UDF_CustomerExistingMachine_2361 || ""
-    );
-    setValue("leadNote", current.UDF_LeadNotes_2361 || "");
-  }, [current, setValue]);
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      documentDate: new Date(),
+      leadRemindDate: new Date(),
+    },
+  });
 
   const onSubmit = async (values: FormValues) => {
-    const payload: LeadUpdateData & { RecordId: number; category: string } = {
-      ...values,
-      RecordId: current?.ReferenceTransaction_2361Id || 0,
-      category: current?.CategoryName || "",
-    };
-    await updateLead.mutateAsync(payload);
+    try {
+      const formData = new FormData();
+      
+      // Append all form values
+      Object.entries(values).forEach(([key, value]) => {
+        if (value instanceof Date) {
+          formData.append(key, value.toISOString());
+        } else {
+          formData.append(key, value);
+        }
+      });
+
+      // Append attachments if any
+      if (files) {
+        Array.from(files).forEach((file) => {
+          formData.append('attachments[]', file);
+        });
+      }
+
+      await insertLead.mutateAsync(formData as any);
+      toast.success('Lead added successfully!');
+      reset(); // Reset form after successful submission
+      setFiles(null);
+      router.push('/leads');
+    } catch (error) {
+      toast.error('Failed to add lead');
+      console.error(error);
+    }
   };
 
   if (!user) {
@@ -165,13 +161,7 @@ export default function LeadEditPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/leads/${params.leadId}`}>
-                    Lead #{params.leadId}
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Edit</BreadcrumbPage>
+                  <BreadcrumbPage>Add New Lead</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -182,15 +172,15 @@ export default function LeadEditPage() {
           <div className="mx-auto max-w-4xl space-y-6">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="flex items-center gap-2">
-                <Link href={`/leads/${params.leadId}`}>
+                <Link href="/leads">
                   <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight">Edit Lead</h1>
+                  <h1 className="text-2xl font-bold tracking-tight">Add New Lead</h1>
                   <p className="text-sm text-muted-foreground">
-                    Update details for lead #{params.leadId}
+                    Create a new business lead
                   </p>
                 </div>
               </div>
@@ -499,17 +489,28 @@ export default function LeadEditPage() {
                         <p className="text-destructive text-xs">{errors.leadNote.message}</p>
                       )}
                     </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="attachments" className="text-sm">Attachments (Optional)</Label>
+                      <Input 
+                        id="attachments" 
+                        type="file"
+                        multiple
+                        onChange={(e) => setFiles(e.target.files)} 
+                        className="h-9"
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
                 <div className="flex gap-3">
                   <Button 
                     type="submit" 
-                    disabled={isSubmitting || updateLead.isPending}
+                    disabled={isSubmitting || insertLead.isPending}
                     className="gap-2"
                   >
-                    <Save className="h-4 w-4" />
-                    {updateLead.isPending ? "Updating..." : "Update Lead"}
+                    <Plus className="h-4 w-4" />
+                    {insertLead.isPending ? "Adding..." : "Add Lead"}
                   </Button>
                   <Button 
                     type="button" 
