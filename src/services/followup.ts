@@ -105,9 +105,9 @@ export const getFollowupList = async (
   SalesQuotationId: number,
   type: string,
   token: string
-): Promise<unknown> => {
+) => {
   try {
-    const response = await client.get("/user/followup/list", {
+    const response = await client.get("/user/followup/get", {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -119,8 +119,14 @@ export const getFollowupList = async (
       },
     });
     return response.data;
-  } catch (error: unknown) {
-    handleError(error);
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.log("error", error.response.data.error);
+      throw { errorMessage: error.response.data.error } as ErrorResponse;
+    } else {
+      console.log("error", error.message);
+      throw { errorMessage: error.message } as ErrorResponse;
+    }
   }
 };
 

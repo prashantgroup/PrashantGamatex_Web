@@ -89,14 +89,6 @@ export default function FollowupsListPage() {
                 <h1 className="text-2xl font-bold tracking-tight">List of Followups</h1>
                 <p className="text-sm text-muted-foreground">Track and manage all followups</p>
               </div>
-              <div className="flex gap-2">
-                <Link href="/followups/add">
-                  <Button className="shrink-0">
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Followup
-                  </Button>
-                </Link>
-              </div>
             </div>
 
             <div className="relative">
