@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { loginSchema, LoginFormData } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/useAuth";
 import { LoginData } from "@/types/auth";
@@ -22,6 +22,7 @@ export function LoginForm({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     setError,
   } = useForm<LoginFormData>({
@@ -112,18 +113,26 @@ export function LoginForm({
 
         <div className="grid gap-3">
           <Label htmlFor="company">Company</Label>
-          <Select
-            id="company"
-            {...register("company")}
-            disabled={loginMutation.isPending}
-          >
-            <SelectContent>
-              <SelectItem value="">Select a company</SelectItem>
-              <SelectItem value="PrashantGamatex">Prashant Gamatex</SelectItem>
-              <SelectItem value="WestPoint">West Point</SelectItem>
-              <SelectItem value="Ferber">Ferber</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name="company"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+                disabled={loginMutation.isPending}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a company" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PrashantGamatex">Prashant Gamatex</SelectItem>
+                  <SelectItem value="WestPoint">West Point</SelectItem>
+                  <SelectItem value="Ferber">Ferber</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.company && (
             <p className="text-sm text-destructive">{errors.company.message}</p>
           )}

@@ -21,7 +21,8 @@ import {
   ListChecks, 
   Users, 
   LogOut,
-  Building2 
+  Building2,
+  Calendar as CalendarIcon
 } from "lucide-react"
 
 const navigationItems = [
@@ -39,6 +40,11 @@ const navigationItems = [
     title: "Followups",
     url: "/followups",
     icon: ListChecks,
+  },
+  {
+    title: "Calendar",
+    url: "/calendar",
+    icon: CalendarIcon,
   },
   {
     title: "Expenses",

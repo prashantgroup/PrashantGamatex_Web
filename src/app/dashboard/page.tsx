@@ -20,19 +20,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TimeframeSelector } from "@/components/dashboard/timeframe-selector";
 import { useDashboard } from "@/hooks/useDashboard";
-import { 
-  TrendingUp, 
-  Users, 
-  ShoppingCart, 
+import {
+  TrendingUp,
+  Users,
+  ShoppingCart,
   DollarSign,
   Calendar,
   Clock,
   CheckCircle,
   AlertCircle,
   ArrowRight,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ReminderCard from "@/components/reminder-card";
 
 export default function DashboardPage() {
   const { user } = useUserStore();
@@ -45,7 +46,9 @@ export default function DashboardPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
+          <p className="text-muted-foreground">
+            Please log in to access this page.
+          </p>
         </div>
       </div>
     );
@@ -55,8 +58,12 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">Error Loading Dashboard</h1>
-          <p className="text-muted-foreground">{error?.errorMessage || "An unexpected error occurred"}</p>
+          <h1 className="text-2xl font-bold text-red-600">
+            Error Loading Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            {error?.errorMessage || "An unexpected error occurred"}
+          </p>
         </div>
       </div>
     );
@@ -234,7 +241,10 @@ export default function DashboardPage() {
                         </div>
                       </CardContent>
                       <CardContent className="border-t border-gray-300 p-4">
-                        <Button onClick={() => router.push("/leads")} className="w-full bg-blue-200 hover:bg-blue-300 text-black">
+                        <Button
+                          onClick={() => router.push("/leads")}
+                          className="w-full bg-blue-200 hover:bg-blue-300 text-black"
+                        >
                           View All Leads
                         </Button>
                       </CardContent>
@@ -361,7 +371,10 @@ export default function DashboardPage() {
                         </div>
                       </CardContent>
                       <CardContent className="border-t border-gray-300 p-4">
-                        <Button onClick={() => router.push("/followups")} className="w-full bg-green-300 hover:bg-green-400 text-black">
+                        <Button
+                          onClick={() => router.push("/followups")}
+                          className="w-full bg-green-300 hover:bg-green-400 text-black"
+                        >
                           View All Quotations
                         </Button>
                       </CardContent>
@@ -384,78 +397,30 @@ export default function DashboardPage() {
                         Upcoming Reminders (Next 3 days)
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-4">
-                      <div className="space-y-3 mb-4">
-                        {dashboardData.leadReminders &&
-                        dashboardData.leadReminders.length > 0
-                          ? dashboardData.leadReminders
-                              .slice(0, 3)
-                              .map((reminder, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <Calendar className="h-4 w-4 text-gray-600" />
-                                    <div>
-                                      <div className="text-sm font-medium">
-                                        Lead Follow-up
-                                      </div>
-                                      <div className="text-xs text-gray-500">
-                                        Reminder #{index + 1}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-xs text-gray-500">
-                                    Due Soon
-                                  </div>
-                                </div>
-                              ))
-                          : null}
+                    <CardContent>
+                      <ReminderCard
+                        leadReminders={dashboardData.leadReminders}
+                        followupReminders={dashboardData.quotationReminders}
+                      />
 
-                        {dashboardData.quotationReminders &&
-                        dashboardData.quotationReminders.length > 0
-                          ? dashboardData.quotationReminders
-                              .slice(0, 3)
-                              .map((reminder, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <Clock className="h-4 w-4 text-gray-600" />
-                                    <div>
-                                      <div className="text-sm font-medium">
-                                        Quotation Review
-                                      </div>
-                                      <div className="text-xs text-gray-500">
-                                        Reminder #{index + 1}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-xs text-gray-500">
-                                    Due Soon
-                                  </div>
-                                </div>
-                              ))
-                          : null}
-
-                        {(!dashboardData.leadReminders ||
-                          dashboardData.leadReminders.length === 0) &&
-                          (!dashboardData.quotationReminders ||
-                            dashboardData.quotationReminders.length === 0) && (
-                            <div className="text-center py-4">
-                              <Clock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-500">
-                                No upcoming reminders
-                              </p>
-                            </div>
-                          )}
-                      </div>
+                      {(!dashboardData.leadReminders ||
+                        dashboardData.leadReminders.length === 0) &&
+                        (!dashboardData.quotationReminders ||
+                          dashboardData.quotationReminders.length === 0) && (
+                          <div className="text-center py-4">
+                            <Clock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                            <p className="text-sm text-gray-500">
+                              No upcoming reminders
+                            </p>
+                          </div>
+                        )}
                     </CardContent>
                     <CardContent className="border-t border-gray-300 p-4">
-                      <Button className="w-full bg-gray-300 hover:bg-gray-400 text-black">
-                        View All Tasks
+                      <Button
+                        onClick={() => router.push("/calendar")}
+                        className="w-full bg-gray-300 hover:bg-gray-400 text-black"
+                      >
+                        View All Reminders
                       </Button>
                     </CardContent>
                   </>
@@ -467,4 +432,4 @@ export default function DashboardPage() {
       </SidebarInset>
     </SidebarProvider>
   );
-} 
+}
