@@ -86,34 +86,11 @@ export type SalesQuotationFollowup = {
   SampleNo: string;
   SchemeDetailsId: number;
   SerialNo: number;
-  TaxAmount1: number;
-  TaxAmount2: number;
-  TaxAmount3: number;
-  TaxAmount4: number;
-  TaxAmount5: number;
-  TaxAmount6: number;
-  TaxAmount7: number;
-  TaxAmount8: number;
-  TaxAmount9: number;
-  TaxAmount10: number;
-  TaxAmount11: number;
-  TaxAmount12: number;
-  TaxPercentage1: number;
-  TaxPercentage2: number;
-  TaxPercentage3: number;
-  TaxPercentage4: number;
-  TaxPercentage5: number;
-  TaxPercentage6: number;
-  TaxPercentage7: number;
-  TaxPercentage8: number;
-  TaxPercentage9: number;
-  TaxPercentage10: number;
-  TaxPercentage11: number;
-  TaxPercentage12: number;
   TransactionMode: string;
   Unit: string;
   UnitQuantity: number;
   ImageName: string;
+  UserName: string;
 };
 
 export type InquiryFollowupInsert = {

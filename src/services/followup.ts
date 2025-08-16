@@ -1,5 +1,5 @@
 import client from "@/lib/api";
-import { SalesFollowupInsert, SalesInquiryFollowup } from "@/types/followup";
+import { SalesFollowupInsert, SalesInquiryFollowup, SalesQuotationFollowup } from "@/types/followup";
 import { ErrorResponse } from "@/types/query";
 
 const handleError = (error: unknown): never => {
@@ -26,7 +26,7 @@ export const getInquiryFollowups = async (token: string): Promise<SalesInquiryFo
   }
 };
 
-export const getQuotationFollowups = async (token: string): Promise<SalesInquiryFollowup[]> => {
+export const getQuotationFollowups = async (token: string): Promise<SalesQuotationFollowup[]> => {
   try {
     const response = await client.get("/user/followup/quotation/get", {
       headers: {

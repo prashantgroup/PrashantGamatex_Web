@@ -15,6 +15,7 @@ import { useUserStore } from "@/store/store";
 import {
   SalesFollowupInsert,
   SalesInquiryFollowup,
+  SalesQuotationFollowup,
 } from "@/types/followup";
 import { ErrorResponse } from "@/types/query";
 
@@ -31,7 +32,7 @@ export const useInquiryFollowup = () => {
 export const useQuotationFollowup = () => {
   const user = useUserStore((state) => state.user);
   
-  return useQuery<SalesInquiryFollowup[], ErrorResponse>({
+  return useQuery<SalesQuotationFollowup[], ErrorResponse>({
     queryKey: ["getQuotationFollowups"],
     queryFn: () => getQuotationFollowups(user?.token || ""),
     enabled: !!user?.token,

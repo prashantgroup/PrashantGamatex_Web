@@ -2,13 +2,13 @@
 
 import React, { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLeads } from "@/hooks/useLeads";
 import { LeadData } from "@/types/lead";
 import Link from "next/link";
 import { useUserStore } from "@/store/store";
 import { AppSidebar } from "@/components/app-sidebar";
+import { LeadCard } from "@/components/lead-card";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +23,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Search, Building, Phone, Plus, Calendar, Eye, Edit } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 export default function LeadsListPage() {
   const { user } = useUserStore();
@@ -114,65 +114,15 @@ export default function LeadsListPage() {
             )}
             
             {error && (
-              <Card className="border-destructive">
-                <CardContent className="p-4 text-destructive">
-                  <p>{error.errorMessage}</p>
-                </CardContent>
-              </Card>
+              <div className="rounded-lg border border-destructive bg-destructive/5 p-4">
+                <p className="text-destructive">{error.errorMessage}</p>
+              </div>
             )}
 
             {!isLoading && !error && (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {filteredLeads.map((lead) => (
-                  <Card key={lead.ReferenceTransaction_2361Id} className="transition-all hover:shadow-md">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="flex items-center">
-                        <Building className="mr-2 h-5 w-5 text-primary" />
-                        {lead.UDF_CompanyName_2361}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <div className="space-y-3">
-                        <div className="flex items-start gap-2">
-                          <div className="flex-1 space-y-1">
-                            <div className="flex items-center text-sm">
-                              <Phone className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                              <span className="font-medium">{lead.UDF_ContactPerson_2361}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{lead.UDF_Product_2361}</p>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <div className="mb-1 rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                              {lead.UDF_LeadSource_2361}
-                            </div>
-                            <div className="flex items-center text-xs text-muted-foreground">
-                              <Calendar className="mr-1 h-3 w-3" />
-                              {new Date(lead.DocumentDate).toLocaleDateString("en-GB")}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between pt-2">
-                          <div className="text-xs text-muted-foreground">
-                            Added by {lead.UserName}
-                          </div>
-                          <div className="flex gap-2">
-                            <Link href={`/leads/${lead.ReferenceTransaction_2361Id}`}>
-                              <Button size="sm" variant="outline">
-                                <Eye className="h-3.5 w-3.5" />
-                                <span className="sr-only sm:not-sr-only sm:ml-1.5">View</span>
-                              </Button>
-                            </Link>
-                            <Link href={`/leads/${lead.ReferenceTransaction_2361Id}/edit`}>
-                              <Button size="sm" variant="default">
-                                <Edit className="h-3.5 w-3.5" />
-                                <span className="sr-only sm:not-sr-only sm:ml-1.5">Edit</span>
-                              </Button>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <LeadCard key={lead.ReferenceTransaction_2361Id} lead={lead} />
                 ))}
                 
                 {filteredLeads.length === 0 && (

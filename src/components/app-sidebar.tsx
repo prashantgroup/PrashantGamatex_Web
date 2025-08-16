@@ -31,9 +31,9 @@ const navigationItems = [
     icon: Home,
   },
   {
-    title: "Expenses",
-    url: "/expenses",
-    icon: Wallet,
+    title: "Leads",
+    url: "/leads",
+    icon: Users,
   },
   {
     title: "Followups",
@@ -41,9 +41,9 @@ const navigationItems = [
     icon: ListChecks,
   },
   {
-    title: "Leads",
-    url: "/leads",
-    icon: Users,
+    title: "Expenses",
+    url: "/expenses",
+    icon: Wallet,
   },
 ]
 

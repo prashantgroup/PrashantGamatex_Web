@@ -10,6 +10,23 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useExpenseInsert } from "@/hooks/useExpense";
 import { useConstants } from "@/hooks/useConstants";
+import { useUserStore } from "@/store/store";
+import { AppSidebar } from "@/components/app-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Plus, Receipt, Calendar, Building, Package } from "lucide-react";
 
 const itemSchema = z.object({
   type: z.string().min(1, "Type is required"),
@@ -27,6 +44,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function ExpensesAddPage() {
+  const { user } = useUserStore();
   const constants = useConstants();
   const insert = useExpenseInsert();
   const { register, control, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
@@ -58,14 +76,60 @@ export default function ExpensesAddPage() {
     await insert.mutateAsync(formData);
   };
 
-  return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Add Expense</h1>
-        <p className="text-sm text-muted-foreground">Create a new expense entry</p>
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground">Please log in to access this page.</p>
+        </div>
       </div>
+    );
+  }
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center border-b">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/dashboard">
+                    Dashboard
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/expenses">
+                    Expenses
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Add Expense</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+
+        <div className="flex-1 overflow-auto p-4 md:p-6">
+          <div className="mx-auto max-w-3xl space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Expense Form</h1>
+              <p className="text-sm text-muted-foreground">Add Your Expense Details</p>
+            </div>
+
+            <Separator className="bg-gray-500" />
+
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
         <div className="grid gap-2">
           <Label>Customer Company</Label>
           <Input placeholder="Company" {...register("customerCompany")} />
@@ -143,6 +207,9 @@ export default function ExpensesAddPage() {
           {insert.isPending ? "Submitting..." : "Submit"}
         </Button>
       </form>
-    </div>
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
