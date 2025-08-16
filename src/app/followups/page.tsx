@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useUserStore } from "@/store/store";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FollowupCard } from "@/components/followup-card";
+import { FollowupFilters, FollowupFilterOptions } from "@/components/followup-filters";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,20 +30,69 @@ export default function FollowupsListPage() {
   const { user } = useUserStore();
   const { data, isLoading, error } = useQuotationFollowup();
   const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState<FollowupFilterOptions>({});
+
+  const handleApplyFilter = (newFilters: FollowupFilterOptions) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilter = () => {
+    setFilters({});
+  };
 
   const filteredFollowups = useMemo(() => {
     if (!data) return [] as SalesQuotationFollowup[];
+    
+    let filtered = data;
+    
+    // Apply search filter
     const q = search.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((followup) => {
-      return (
-        followup.PartyName.toLowerCase().includes(q) ||
-        followup.MachineName.toLowerCase().includes(q) ||
-        String(followup.DocumentNo).includes(q) ||
-        (followup.ReferenceNo && followup.ReferenceNo.toLowerCase().includes(q))
+    if (q) {
+      filtered = filtered.filter((followup) => {
+        return (
+          followup.PartyName.toLowerCase().includes(q) ||
+          followup.MachineName.toLowerCase().includes(q) ||
+          String(followup.DocumentNo).includes(q) ||
+          (followup.ReferenceNo && followup.ReferenceNo.toLowerCase().includes(q))
+        );
+      });
+    }
+    
+    // Apply additional filters
+    if (filters.person) {
+      filtered = filtered.filter((followup) => 
+        followup.UserName === filters.person?.UserName
       );
-    });
-  }, [data, search]);
+    }
+    
+    if (filters.partyName) {
+      filtered = filtered.filter((followup) => 
+        followup.PartyName.toLowerCase().includes(filters.partyName!.toLowerCase())
+      );
+    }
+    
+    if (filters.machineName) {
+      filtered = filtered.filter((followup) => 
+        followup.MachineName.toLowerCase().includes(filters.machineName!.toLowerCase())
+      );
+    }
+    
+    if (filters.fromDate) {
+      filtered = filtered.filter((followup) => {
+        const followupDate = new Date(followup.DocumentDate);
+        return followupDate >= filters.fromDate!;
+      });
+    }
+    
+    if (filters.toDate) {
+      filtered = filtered.filter((followup) => {
+        const followupDate = new Date(followup.DocumentDate);
+        return followupDate <= filters.toDate!;
+      });
+    }
+    
+    return filtered;
+  }, [data, search, filters]);
 
   if (!user) {
     return (
@@ -91,6 +141,14 @@ export default function FollowupsListPage() {
               </div>
             </div>
 
+            {/* Filters */}
+            <FollowupFilters
+              currentFilters={filters}
+              onApplyFilter={handleApplyFilter}
+              onClearFilter={handleClearFilter}
+            />
+
+            {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -115,27 +173,39 @@ export default function FollowupsListPage() {
             )}
 
             {!isLoading && !error && (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filteredFollowups.map((followup) => (
-                  <FollowupCard key={followup.SalesQuotationId} followup={followup as SalesQuotationFollowup} />
-                ))}
-                
-                {filteredFollowups.length === 0 && (
-                  <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                    <Package className="h-10 w-10 text-muted-foreground/50" />
-                    <h3 className="mt-4 text-lg font-semibold">No followups found</h3>
-                    <p className="mb-4 mt-2 text-sm text-muted-foreground">
-                      Try adjusting your search or create a new followup
-                    </p>
-                    <Link href="/followups/add">
-                      <Button>
-                        <Plus className="mr-1 h-4 w-4" />
-                        Add Followup
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
+              <>
+                {/* Results Summary */}
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>
+                    {filteredFollowups.length} of {data?.length || 0} followups
+                    {(search || Object.keys(filters).some(key => filters[key as keyof FollowupFilterOptions])) && (
+                      <span className="ml-2">(filtered)</span>
+                    )}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredFollowups.map((followup) => (
+                    <FollowupCard key={followup.SalesQuotationId} followup={followup as SalesQuotationFollowup} />
+                  ))}
+                  
+                  {filteredFollowups.length === 0 && (
+                    <div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+                      <Package className="h-10 w-10 text-muted-foreground/50" />
+                      <h3 className="mt-4 text-lg font-semibold">No followups found</h3>
+                      <p className="mb-4 mt-2 text-sm text-muted-foreground">
+                        Try adjusting your search or filters, or create a new followup
+                      </p>
+                      <Link href="/followups/add">
+                        <Button>
+                          <Plus className="mr-1 h-4 w-4" />
+                          Add Followup
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
