@@ -1,32 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { ErrorResponse } from "@/types/query";
-import { useAppStore, useUserStore } from "@/store/store";
-import { LeadReminderData } from "@/types/lead";
+import { AppStore, useAppStore, UserStore, useUserStore } from "@/store/store";
 import { QuotationReminderData } from "@/types/followup";
-import { Timeframe } from "@/types/dashboard";
-
-// Mock dashboard service for now - you'll need to implement this
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getDashboard = async (_token: string | undefined, _timeframe: Timeframe) => {
-  // This is a placeholder - implement actual dashboard service
-  return {
-    dashboard: [
-      {
-        pending_lead: 0,
-        total_lead: 0,
-        pending_quotation: 0,
-        total_quotation: 0,
-      }
-    ],
-    leadReminders: [] as LeadReminderData[],
-    quotationReminders: [] as QuotationReminderData[],
-  };
-};
+import { LeadReminderData } from "@/types/lead";
+import { ErrorResponse } from "@/types/query";
+import { useQuery } from "@tanstack/react-query";
+import { getDashboard } from "./../services/dashboard";
 
 export const useDashboard = () => {
-  const user = useUserStore((state) => state.user);
-  const timeframe = useAppStore((state) => state.timeframe);
-  
+  const token = useUserStore((state: UserStore) => state.user?.token);
+  const timeframe = useAppStore((state: AppStore) => state.timeframe);
   return useQuery<
     {
       dashboard: {
@@ -38,11 +19,20 @@ export const useDashboard = () => {
       leadReminders: LeadReminderData[];
       quotationReminders: QuotationReminderData[];
     },
-    ErrorResponse
+    ErrorResponse,
+    {
+      dashboard: {
+        pending_lead: number;
+        total_lead: number;
+        pending_quotation: number;
+        total_quotation: number;
+      }[];
+      leadReminders: LeadReminderData[];
+      quotationReminders: QuotationReminderData[];
+    }
   >({
     queryKey: ["getDashboard", timeframe],
-    queryFn: () => getDashboard(user?.token, timeframe),
-    enabled: !!user?.token,
+    queryFn: () => getDashboard(token, timeframe),
+    enabled: !!token,
   });
 };
- 
