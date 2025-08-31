@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useInsertQuotationFollowup, useQuotationFollowup } from "@/hooks/useFollowup";
 import { SalesFollowupInsert } from "@/types/followup";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -79,6 +80,14 @@ const Ratings = [
 const CloseReasons = ["Close", "Hold", "Lost", "Received"];
 
 export default function AddFollowupPage() {
+  return (
+    <AuthGuard>
+      <AddFollowupContent />
+    </AuthGuard>
+  );
+}
+
+function AddFollowupContent() {
   const { user } = useUserStore();
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -163,16 +172,7 @@ export default function AddFollowupPage() {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

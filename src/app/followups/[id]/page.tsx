@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -37,6 +38,14 @@ import { getFollowupList } from "@/services/followup";
 import { useQuotationFollowup } from "@/hooks/useFollowup";
 
 export default function FollowupDetailPage() {
+  return (
+    <AuthGuard>
+      <FollowupDetailContent />
+    </AuthGuard>
+  );
+}
+
+function FollowupDetailContent() {
   const { user } = useUserStore();
   const params = useParams();
   const router = useRouter();
@@ -66,17 +75,6 @@ export default function FollowupDetailPage() {
       ),
     enabled: !!user?.token && !!followupId,
   });
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!followupDetails) {
     return (

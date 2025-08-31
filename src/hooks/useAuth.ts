@@ -27,7 +27,14 @@ export const useLogin = () => {
         },
         token: data.token,
       });
-      router.push("/dashboard");
+      
+      // Check for redirect parameter in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirect');
+      
+      // Redirect to the intended page or dashboard
+      router.push(redirectTo || "/dashboard");
+      
       queryClient.invalidateQueries({
         queryKey: ["auth"],
       });

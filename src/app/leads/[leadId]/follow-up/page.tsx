@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { LeadUpdate } from "@/types/lead";
 import Link from "next/link";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -58,6 +59,14 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function AddNewLeadFollowup() {
+  return (
+    <AuthGuard>
+      <AddNewLeadFollowupContent />
+    </AuthGuard>
+  );
+}
+
+function AddNewLeadFollowupContent() {
   const { user } = useUserStore();
   const params = useParams<{ leadId: string }>();
   const leadId = Number(params.leadId);
@@ -100,16 +109,7 @@ export default function AddNewLeadFollowup() {
     await insertUpdate.mutateAsync(payload);
   };
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

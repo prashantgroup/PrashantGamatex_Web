@@ -8,6 +8,7 @@ import { LeadData } from "@/types/lead";
 import { LeadFilters, LeadFilterOptions } from "@/components/lead-filters";
 import Link from "next/link";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import { LeadCard } from "@/components/lead-card";
 import {
@@ -27,6 +28,14 @@ import {
 import { Search, Plus } from "lucide-react";
 
 export default function LeadsListPage() {
+  return (
+    <AuthGuard>
+      <LeadsListContent />
+    </AuthGuard>
+  );
+}
+
+function LeadsListContent() {
   const { user } = useUserStore();
   const { data, isLoading, error } = useLeads();
   const [search, setSearch] = useState("");
@@ -105,16 +114,7 @@ export default function LeadsListPage() {
     return filtered;
   }, [data, search, filters]);
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

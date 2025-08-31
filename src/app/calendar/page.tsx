@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCalendar } from "@/hooks/useCalendar";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -39,6 +40,14 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function CalendarPage() {
+  return (
+    <AuthGuard>
+      <CalendarContent />
+    </AuthGuard>
+  );
+}
+
+function CalendarContent() {
   const { user } = useUserStore();
   const { data: calendarData, isLoading, error } = useCalendar();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -50,17 +59,6 @@ export default function CalendarPage() {
       setSelectedDate(value[0]);
     }
   }, []);
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
 
   const formatDateForKey = (date: Date | null): string => {
     if (!date) return '';

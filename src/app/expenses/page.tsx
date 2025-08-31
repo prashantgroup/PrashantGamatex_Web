@@ -6,6 +6,7 @@ import { ExpenseObject } from "@/types/expense";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ExpenseCard } from "@/components/expense-card";
 import {
@@ -25,6 +26,14 @@ import {
 import { Plus, Receipt, RefreshCw } from "lucide-react";
 
 export default function ExpensesListPage() {
+  return (
+    <AuthGuard>
+      <ExpensesListContent />
+    </AuthGuard>
+  );
+}
+
+function ExpensesListContent() {
   const { user } = useUserStore();
   const { data, isLoading, error, refetch } = useExpenses();
   const [refreshing, setRefreshing] = useState(false);
@@ -35,16 +44,7 @@ export default function ExpensesListPage() {
     setRefreshing(false);
   };
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

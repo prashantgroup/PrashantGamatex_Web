@@ -14,6 +14,7 @@ import { useConstants } from "@/hooks/useConstants";
 import { useInsertLead } from "@/hooks/useLeads";
 import { LeadInsertData } from "@/types/lead";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -73,6 +74,14 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function AddLeadPage() {
+  return (
+    <AuthGuard>
+      <AddLeadContent />
+    </AuthGuard>
+  );
+}
+
+function AddLeadContent() {
   const { user } = useUserStore();
   const router = useRouter();
   const constants = useConstants();
@@ -124,16 +133,7 @@ export default function AddLeadPage() {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

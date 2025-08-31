@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserStore, useAppStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -36,23 +37,18 @@ import { useRouter } from "next/navigation";
 import ReminderCard from "@/components/reminder-card";
 
 export default function DashboardPage() {
+  return (
+    <AuthGuard>
+      <DashboardContent />
+    </AuthGuard>
+  );
+}
+
+function DashboardContent() {
   const { user } = useUserStore();
   const { timeframe } = useAppStore();
   const router = useRouter();
   const { data: dashboardData, isLoading, isError, error } = useDashboard();
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">
-            Please log in to access this page.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (isError) {
     return (
@@ -104,8 +100,8 @@ export default function DashboardPage() {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
-              Welcome back, {user.data.name}! Here's what's happening with your{" "}
-              {user.data.company} account.
+              Welcome back, {user?.data.name}! Here's what's happening with your{" "}
+              {user?.data.company} account.
             </p>
           </div>
 

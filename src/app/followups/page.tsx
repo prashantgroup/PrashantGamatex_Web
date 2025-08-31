@@ -7,6 +7,7 @@ import { useQuotationFollowup } from "@/hooks/useFollowup";
 import { SalesQuotationFollowup } from "@/types/followup";
 import Link from "next/link";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FollowupCard } from "@/components/followup-card";
 import { FollowupFilters, FollowupFilterOptions } from "@/components/followup-filters";
@@ -27,6 +28,14 @@ import {
 import { Search, Plus, Calendar, Package, Building } from "lucide-react";
 
 export default function FollowupsListPage() {
+  return (
+    <AuthGuard>
+      <FollowupsListContent />
+    </AuthGuard>
+  );
+}
+
+function FollowupsListContent() {
   const { user } = useUserStore();
   const { data, isLoading, error } = useQuotationFollowup();
   const [search, setSearch] = useState("");
@@ -94,16 +103,7 @@ export default function FollowupsListPage() {
     return filtered;
   }, [data, search, filters]);
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <SidebarProvider>

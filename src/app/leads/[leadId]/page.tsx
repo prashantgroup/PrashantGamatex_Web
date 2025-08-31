@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLeads } from "@/hooks/useLeads";
 import { useUserStore } from "@/store/store";
+import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -38,23 +39,20 @@ import {
 } from "lucide-react";
 
 export default function LeadHomePage() {
+  return (
+    <AuthGuard>
+      <LeadHomeContent />
+    </AuthGuard>
+  );
+}
+
+function LeadHomeContent() {
   const { user } = useUserStore();
   const params = useParams<{ leadId: string }>();
   const id = Number(params.leadId);
   const { data, isLoading, error } = useLeads();
 
   const lead = useMemo(() => data?.find(l => l.ReferenceTransaction_2361Id === id), [data, id]);
-
-  if (!user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">Please log in to access this page.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <SidebarProvider>
