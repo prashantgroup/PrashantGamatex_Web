@@ -402,18 +402,6 @@ export default function DashboardPage() {
                         leadReminders={dashboardData.leadReminders}
                         followupReminders={dashboardData.quotationReminders}
                       />
-
-                      {(!dashboardData.leadReminders ||
-                        dashboardData.leadReminders.length === 0) &&
-                        (!dashboardData.quotationReminders ||
-                          dashboardData.quotationReminders.length === 0) && (
-                          <div className="text-center py-4">
-                            <Clock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-500">
-                              No upcoming reminders
-                            </p>
-                          </div>
-                        )}
                     </CardContent>
                     <CardContent className="border-t border-gray-300 p-4">
                       <Button
