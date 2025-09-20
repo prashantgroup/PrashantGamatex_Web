@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,7 @@ import { useConstants } from "@/hooks/useConstants";
 import { useLeads, useUpdateLead } from "@/hooks/useLeads";
 import { LeadData, LeadUpdateData } from "@/types/lead";
 import { useUserStore } from "@/store/store";
+import client from "@/lib/api";
 import { AuthGuard } from "@/components/auth-guard";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -37,6 +38,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   SidebarInset,
   SidebarProvider,
@@ -56,7 +58,10 @@ import {
   FileText,
   Paperclip,
   Download,
-  Eye
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from "lucide-react";
 
 const schema = z.object({
@@ -92,6 +97,25 @@ function LeadEditContent() {
   const params = useParams<{ leadId: string }>();
   const router = useRouter();
   const id = Number(params.leadId);
+  const [imageBlobUrls, setImageBlobUrls] = useState<Record<string, string>>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Function to fetch authenticated images
+  const fetchAuthenticatedImage = async (imageName: string): Promise<string> => {
+    try {
+      const response = await client.get(`/user/lead/images/${imageName}`, {
+        responseType: 'blob',
+      });
+      const blob = response.data;
+      const blobUrl = URL.createObjectURL(blob);
+      return blobUrl;
+    } catch (error) {
+      console.error('Error fetching image:', error);
+      throw error;
+    }
+  };
+
   const { data: leads } = useLeads();
   const constants = useConstants();
   const updateLead = useUpdateLead();
@@ -138,6 +162,87 @@ function LeadEditContent() {
     setValue("leadNote", current.UDF_LeadNotes_2361 || "");
   }, [current, setValue]);
 
+  // Fetch authenticated images when current lead changes
+  useEffect(() => {
+    if (!current?.ImageName) return;
+
+    const fetchImages = async () => {
+      const imageNames = current.ImageName.split(",").filter(img => img.trim());
+      const newBlobUrls: Record<string, string> = {};
+
+      for (const imageName of imageNames) {
+        const trimmedName = imageName.trim();
+        if (trimmedName && !imageBlobUrls[trimmedName]) {
+          try {
+            const blobUrl = await fetchAuthenticatedImage(trimmedName);
+            newBlobUrls[trimmedName] = blobUrl;
+          } catch (error) {
+            console.error(`Failed to fetch image ${trimmedName}:`, error);
+          }
+        }
+      }
+
+      if (Object.keys(newBlobUrls).length > 0) {
+        setImageBlobUrls(prev => ({ ...prev, ...newBlobUrls }));
+      }
+    };
+
+    fetchImages();
+  }, [current?.ImageName, current?.ReferenceTransaction_2361Id, imageBlobUrls, fetchAuthenticatedImage]);
+
+  // Cleanup blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(imageBlobUrls).forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [imageBlobUrls]);
+
+  // Helper functions for modal
+  const imageNames = current?.ImageName ? current.ImageName.split(",").filter(img => img.trim()) : [];
+  const availableImages = imageNames.filter(name => imageBlobUrls[name.trim()]);
+
+  const openModal = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % availableImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + availableImages.length) % availableImages.length);
+  };
+
+  // Keyboard navigation for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isModalOpen) return;
+      
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          prevImage();
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          nextImage();
+          break;
+        case 'Escape':
+          event.preventDefault();
+          setIsModalOpen(false);
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen, availableImages.length]);
+
   const onSubmit = async (values: FormValues) => {
     const payload: LeadUpdateData & { RecordId: number; category: string } = {
       ...values,
@@ -147,8 +252,6 @@ function LeadEditContent() {
     };
     await updateLead.mutateAsync(payload);
   };
-
-
 
   return (
     <SidebarProvider>
@@ -590,21 +693,26 @@ function LeadEditContent() {
                     <CardContent>
                       {current.ImageName.split(",").filter(img => img.trim()).length > 0 ? (
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                          {current.ImageName.split(",").filter(img => img.trim()).map((imageName, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                            >
+                          {current.ImageName.split(",").filter(img => img.trim()).map((imageName, index) => {
+                            const trimmedName = imageName.trim();
+                            const blobUrl = imageBlobUrls[trimmedName];
+                            const isLoading = !blobUrl;
+                            
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                              >
                               <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <div className="p-2 bg-primary/10 rounded-lg">
                                   <FileText className="h-4 w-4 text-primary" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-medium truncate">
-                                    {imageName.trim() || `Attachment ${index + 1}`}
+                                    {trimmedName || `Attachment ${index + 1}`}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    Uploaded file
+                                    {isLoading ? 'Loading...' : 'Uploaded file'}
                                   </p>
                                 </div>
                               </div>
@@ -614,12 +722,14 @@ function LeadEditContent() {
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0"
+                                  disabled={isLoading}
                                   onClick={() => {
-                                    // Open file in new tab
-                                    window.open(
-                                      `${process.env.NEXT_PUBLIC_API_URL || ''}/user/lead/images/${imageName.trim()}`,
-                                      '_blank'
-                                    );
+                                    if (blobUrl) {
+                                      const imageIndex = availableImages.findIndex(name => name.trim() === trimmedName);
+                                      if (imageIndex !== -1) {
+                                        openModal(imageIndex);
+                                      }
+                                    }
                                   }}
                                 >
                                   <Eye className="h-3 w-3" />
@@ -629,21 +739,24 @@ function LeadEditContent() {
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0"
+                                  disabled={isLoading}
                                   onClick={() => {
-                                    // Download file
-                                    const link = document.createElement('a');
-                                    link.href = `${process.env.NEXT_PUBLIC_API_URL || ''}/user/lead/images/${imageName.trim()}`;
-                                    link.download = imageName.trim();
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
+                                    if (blobUrl) {
+                                      const link = document.createElement('a');
+                                      link.href = blobUrl;
+                                      link.download = trimmedName;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                    }
                                   }}
                                 >
                                   <Download className="h-3 w-3" />
                                 </Button>
                               </div>
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="text-center py-6">
@@ -677,6 +790,119 @@ function LeadEditContent() {
           </div>
         </div>
       </SidebarInset>
+
+      {/* Image Gallery Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+          <DialogHeader className="p-6 pb-4">
+            <DialogTitle className="flex items-center justify-between">
+              <span className="flex items-center">
+                <Paperclip className="mr-2 h-5 w-5 text-primary" />
+                Attachment Gallery ({currentImageIndex + 1} of {availableImages.length})
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          
+          {availableImages.length > 0 && (
+            <div className="relative flex-1 flex flex-col">
+              {/* Main Image Display */}
+              <div className="flex-1 flex items-center justify-center p-6 bg-muted/20">
+                <div className="relative max-w-full max-h-full">
+                  <img
+                    src={imageBlobUrls[availableImages[currentImageIndex]?.trim()]}
+                    alt={`Attachment ${currentImageIndex + 1}`}
+                    className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
+                  />
+                  
+                  {/* Navigation Arrows */}
+                  {availableImages.length > 1 && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Image Info and Actions */}
+              <div className="p-6 border-t bg-background">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {availableImages[currentImageIndex]?.trim() || `Attachment ${currentImageIndex + 1}`}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Click and drag to pan • Scroll to zoom
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const blobUrl = imageBlobUrls[availableImages[currentImageIndex]?.trim()];
+                        if (blobUrl) {
+                          const link = document.createElement('a');
+                          link.href = blobUrl;
+                          link.download = availableImages[currentImageIndex]?.trim() || 'attachment';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Thumbnail Strip */}
+                {availableImages.length > 1 && (
+                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+                    {availableImages.map((imageName, index) => {
+                      const trimmedName = imageName.trim();
+                      const blobUrl = imageBlobUrls[trimmedName];
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                            index === currentImageIndex 
+                              ? 'border-primary ring-2 ring-primary/20' 
+                              : 'border-muted hover:border-muted-foreground'
+                          }`}
+                        >
+                          <img
+                            src={blobUrl}
+                            alt={`Thumbnail ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </SidebarProvider>
   );
 }
