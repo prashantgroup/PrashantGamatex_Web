@@ -53,7 +53,10 @@ import {
   Phone,
   Globe,
   Clock,
-  FileText
+  FileText,
+  Paperclip,
+  Download,
+  Eye
 } from "lucide-react";
 
 const schema = z.object({
@@ -68,7 +71,7 @@ const schema = z.object({
   leadSource: z.string().min(1, "Lead Source is required"),
   competition: z.string().min(1, "Competition is required"),
   timeFrame: z.string().min(1, "Time Frame is required"),
-  leadRemindDate: z.date(),
+  leadRemindDate: z.string().min(1, "Lead Remind Date is required"),
   customerApplication: z.string().min(1, "Customer Application is required"),
   customerExistingMachine: z.string().min(1, "Customer Existing Machine is required"),
   leadNote: z.string().min(1, "Lead Note is required"),
@@ -108,6 +111,7 @@ function LeadEditContent() {
 
   useEffect(() => {
     if (!current) return;
+    console.log("current lead",current);
     setValue("currency", current.CurrencyName || "");
     setValue("customerCompanyName", current.UDF_CompanyName_2361 || "");
     setValue("contactPerson", current.UDF_ContactPerson_2361 || "");
@@ -121,7 +125,7 @@ function LeadEditContent() {
     setValue("timeFrame", current.UDF_TimeFrame_2361 || "");
     setValue(
       "leadRemindDate",
-      new Date(current.UDF_LeadRemindDate_2361 || new Date())
+      new Date(current.UDF_LeadRemindDate_2361).toISOString().split('T')[0]
     );
     setValue(
       "customerApplication",
@@ -137,6 +141,7 @@ function LeadEditContent() {
   const onSubmit = async (values: FormValues) => {
     const payload: LeadUpdateData & { RecordId: number; category: string } = {
       ...values,
+      leadRemindDate: new Date(values.leadRemindDate), // Convert string back to Date
       RecordId: current?.ReferenceTransaction_2361Id || 0,
       category: current?.CategoryName || "",
     };
@@ -219,7 +224,11 @@ function LeadEditContent() {
                           name="currency"
                           control={control}
                           render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              key={`currency-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select currency" />
                               </SelectTrigger>
@@ -364,7 +373,11 @@ function LeadEditContent() {
                           name="product"
                           control={control}
                           render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              key={`product-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select product" />
                               </SelectTrigger>
@@ -398,7 +411,11 @@ function LeadEditContent() {
                           name="leadSource"
                           control={control}
                           render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              key={`leadSource-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select lead source" />
                               </SelectTrigger>
@@ -434,7 +451,11 @@ function LeadEditContent() {
                           name="timeFrame"
                           control={control}
                           render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              key={`timeFrame-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select time frame" />
                               </SelectTrigger>
@@ -465,7 +486,11 @@ function LeadEditContent() {
                           name="customerApplication"
                           control={control}
                           render={({ field }) => (
-                            <Select value={field.value} onValueChange={field.onChange}>
+                            <Select 
+                              key={`customerApplication-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
+                              value={field.value} 
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger className="h-9">
                                 <SelectValue placeholder="Select application" />
                               </SelectTrigger>
@@ -527,7 +552,7 @@ function LeadEditContent() {
                       <Input 
                         id="leadRemindDate" 
                         type="date"
-                        {...register("leadRemindDate", { valueAsDate: true })} 
+                        {...register("leadRemindDate")} 
                         className="h-9"
                       />
                       {errors.leadRemindDate && (
@@ -552,6 +577,83 @@ function LeadEditContent() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Attachments Display */}
+                {current?.ImageName && (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center text-lg">
+                        <Paperclip className="mr-2 h-5 w-5 text-primary" />
+                        Attachments
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {current.ImageName.split(",").filter(img => img.trim()).length > 0 ? (
+                        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                          {current.ImageName.split(",").filter(img => img.trim()).map((imageName, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <div className="p-2 bg-primary/10 rounded-lg">
+                                  <FileText className="h-4 w-4 text-primary" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">
+                                    {imageName.trim() || `Attachment ${index + 1}`}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Uploaded file
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => {
+                                    // Open file in new tab
+                                    window.open(
+                                      `${process.env.NEXT_PUBLIC_API_URL || ''}/user/lead/images/${imageName.trim()}`,
+                                      '_blank'
+                                    );
+                                  }}
+                                >
+                                  <Eye className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => {
+                                    // Download file
+                                    const link = document.createElement('a');
+                                    link.href = `${process.env.NEXT_PUBLIC_API_URL || ''}/user/lead/images/${imageName.trim()}`;
+                                    link.download = imageName.trim();
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                  }}
+                                >
+                                  <Download className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-6">
+                          <Paperclip className="h-12 w-12 text-muted-foreground/50 mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">No attachments found</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
 
                 <div className="flex gap-3">
                   <Button 
