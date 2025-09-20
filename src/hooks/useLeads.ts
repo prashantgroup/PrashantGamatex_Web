@@ -12,7 +12,7 @@ import {
 } from "@/services/lead";
 import { ErrorResponse } from "@/types/query";
 import { toast } from "sonner";
-import { LeadInsertData, LeadData, LeadUpdateData, LeadUpdate } from "@/types/lead";
+import { LeadInsertData, LeadData, LeadUpdateData, LeadUpdate, LeadUpdateInsert } from "@/types/lead";
 import { useUserStore } from "@/store/store";
 import { useRouter } from "next/navigation";
 
@@ -117,7 +117,7 @@ export const useInsertLeadUpdate = () => {
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
   
-  return useMutation<unknown, ErrorResponse, LeadUpdate>({
+  return useMutation<unknown, ErrorResponse, LeadUpdateInsert>({
     mutationFn: (data) => insertLeadUpdate(data, user?.token || ""),
     mutationKey: ["insertLeadUpdate"],
     onSuccess: () => {
