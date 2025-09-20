@@ -1,8 +1,9 @@
 import React from "react";
 import { Package, Clock, User, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { LeadData } from "@/types/lead";
 
-export function LeadCard({ lead }: { lead: any }) {
+export function LeadCard({ lead }: { lead: LeadData }) {
   return (
     <div className="w-full bg-white shadow-md rounded-lg overflow-hidden flex flex-col justify-between border cursor-pointer hover:shadow-lg transition-shadow">
       <div className="p-4">
@@ -26,35 +27,33 @@ export function LeadCard({ lead }: { lead: any }) {
           </span>
         </div>
 
-        {lead.UDF_LeadSource_2361 && (
+        {lead.UDF_TimeFrame_2361 && (
           <div className="flex items-center mb-2">
             <Clock size={16} color="#4B5563" />
             <span className="text-sm text-gray-600 ml-2">
-              {lead.UDF_LeadSource_2361}
+              {lead.UDF_TimeFrame_2361}
             </span>
           </div>
         )}
 
         <div className="flex items-center">
           <User size={16} color="#4B5563" />
-          <span className="text-sm text-gray-600 ml-2">
-            {lead.UDF_ContactPerson_2361}
-          </span>
+          <span className="text-sm text-gray-600 ml-2">{lead.UserName}</span>
         </div>
       </div>
 
       <div className="bg-gray-100 p-3 flex justify-between items-center">
         <Link
-          href={`/leads/${lead.ReferenceTransaction_2361Id}`}
+          href={`/leads/${lead.ReferenceTransaction_2361Id}/edit`}
           className="text-sm text-blue-600 font-semibold"
         >
-          View / Edit
+          Edit
         </Link>
         <Link
-          href={`/leads/${lead.ReferenceTransaction_2361Id}/edit`}
+          href={`/leads/${lead.ReferenceTransaction_2361Id}`}
           className="text-sm text-blue-600 font-semibold flex"
         >
-          Lead Updates
+          View
           <ChevronRight size={20} color="#2563EB" />
         </Link>
       </div>

@@ -63,6 +63,7 @@ import {
   ChevronRight,
   X
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 const schema = z.object({
   currency: z.string().min(1, "Currency is required"),
@@ -267,15 +268,11 @@ function LeadEditContent() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">
-                    Dashboard
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/leads">
-                    Leads
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="/leads">Leads</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
@@ -297,12 +294,18 @@ function LeadEditContent() {
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="flex items-center gap-2">
                 <Link href={`/leads/${params.leadId}`}>
-                  <Button variant="outline" size="icon" className="h-8 w-8 rounded-full">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                  >
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
                 </Link>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-tight">Edit Lead</h1>
+                  <h1 className="text-2xl font-bold tracking-tight">
+                    Edit Lead
+                  </h1>
                   <p className="text-sm text-muted-foreground">
                     Update details for lead #{params.leadId}
                   </p>
@@ -322,14 +325,18 @@ function LeadEditContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="currency" className="text-sm">Currency</Label>
+                        <Label htmlFor="currency" className="text-sm">
+                          Currency
+                        </Label>
                         <Controller
                           name="currency"
                           control={control}
                           render={({ field }) => (
-                            <Select 
-                              key={`currency-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
-                              value={field.value} 
+                            <Select
+                              key={`currency-${
+                                current?.ReferenceTransaction_2361Id || "new"
+                              }-${field.value}`}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
@@ -341,7 +348,10 @@ function LeadEditContent() {
                                     Loading...
                                   </SelectItem>
                                 ) : (
-                                  (constants.data?.CurrencyOutput.split(",") || []).map((c) => (
+                                  (
+                                    constants.data?.CurrencyOutput.split(",") ||
+                                    []
+                                  ).map((c) => (
                                     <SelectItem key={c} value={c}>
                                       {c}
                                     </SelectItem>
@@ -352,34 +362,47 @@ function LeadEditContent() {
                           )}
                         />
                         {errors.currency && (
-                          <p className="text-destructive text-xs">{errors.currency.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.currency.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="customerCompanyName" className="text-sm">Company Name</Label>
-                        <Input 
+                        <Label
+                          htmlFor="customerCompanyName"
+                          className="text-sm"
+                        >
+                          Company Name
+                        </Label>
+                        <Input
                           id="customerCompanyName"
-                          placeholder="Enter company name" 
-                          {...register("customerCompanyName")} 
+                          placeholder="Enter company name"
+                          {...register("customerCompanyName")}
                           className="h-9"
                         />
                         {errors.customerCompanyName && (
-                          <p className="text-destructive text-xs">{errors.customerCompanyName.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.customerCompanyName.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="address" className="text-sm">Address</Label>
-                      <Input 
-                        id="address" 
-                        placeholder="Enter complete address" 
-                        {...register("address")} 
-                        className="h-9"
+                      <Label htmlFor="address" className="text-sm">
+                        Address
+                      </Label>
+                      <Textarea
+                        id="address"
+                        placeholder="Enter complete address"
+                        rows={3}
+                        {...register("address")}
                       />
                       {errors.address && (
-                        <p className="text-destructive text-xs">{errors.address.message}</p>
+                        <p className="text-destructive text-xs">
+                          {errors.address.message}
+                        </p>
                       )}
                     </div>
                   </CardContent>
@@ -395,63 +418,81 @@ function LeadEditContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="contactPerson" className="text-sm">Contact Person</Label>
-                        <Input 
-                          id="contactPerson" 
-                          placeholder="Enter name" 
-                          {...register("contactPerson")} 
+                        <Label htmlFor="contactPerson" className="text-sm">
+                          Contact Person
+                        </Label>
+                        <Input
+                          id="contactPerson"
+                          placeholder="Enter name"
+                          {...register("contactPerson")}
                           className="h-9"
                         />
                         {errors.contactPerson && (
-                          <p className="text-destructive text-xs">{errors.contactPerson.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.contactPerson.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="designation" className="text-sm">Designation</Label>
-                        <Input 
-                          id="designation" 
-                          placeholder="Enter designation" 
-                          {...register("designation")} 
+                        <Label htmlFor="designation" className="text-sm">
+                          Designation
+                        </Label>
+                        <Input
+                          id="designation"
+                          placeholder="Enter designation"
+                          {...register("designation")}
                           className="h-9"
                         />
                         {errors.designation && (
-                          <p className="text-destructive text-xs">{errors.designation.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.designation.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="mobileNo" className="flex items-center text-sm">
+                        <Label
+                          htmlFor="mobileNo"
+                          className="flex items-center text-sm"
+                        >
                           <Phone className="mr-1.5 h-3.5 w-3.5" />
                           Mobile Number
                         </Label>
-                        <Input 
-                          id="mobileNo" 
-                          placeholder="Enter mobile number" 
-                          {...register("mobileNo")} 
+                        <Input
+                          id="mobileNo"
+                          placeholder="Enter mobile number"
+                          {...register("mobileNo")}
                           className="h-9"
                         />
                         {errors.mobileNo && (
-                          <p className="text-destructive text-xs">{errors.mobileNo.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.mobileNo.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="emailId" className="flex items-center text-sm">
+                        <Label
+                          htmlFor="emailId"
+                          className="flex items-center text-sm"
+                        >
                           <Mail className="mr-1.5 h-3.5 w-3.5" />
                           Email Address
                         </Label>
-                        <Input 
-                          id="emailId" 
-                          type="email" 
-                          placeholder="Enter email address" 
-                          {...register("emailId")} 
+                        <Input
+                          id="emailId"
+                          type="email"
+                          placeholder="Enter email address"
+                          {...register("emailId")}
                           className="h-9"
                         />
                         {errors.emailId && (
-                          <p className="text-destructive text-xs">{errors.emailId.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.emailId.message}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -468,7 +509,10 @@ function LeadEditContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="product" className="flex items-center text-sm">
+                        <Label
+                          htmlFor="product"
+                          className="flex items-center text-sm"
+                        >
                           <Package className="mr-1.5 h-3.5 w-3.5" />
                           Product
                         </Label>
@@ -476,9 +520,11 @@ function LeadEditContent() {
                           name="product"
                           control={control}
                           render={({ field }) => (
-                            <Select 
-                              key={`product-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
-                              value={field.value} 
+                            <Select
+                              key={`product-${
+                                current?.ReferenceTransaction_2361Id || "new"
+                              }-${field.value}`}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
@@ -490,7 +536,10 @@ function LeadEditContent() {
                                     Loading...
                                   </SelectItem>
                                 ) : (
-                                  (constants.data?.ProductOutput.split(",") || []).map((p) => (
+                                  (
+                                    constants.data?.ProductOutput.split(",") ||
+                                    []
+                                  ).map((p) => (
                                     <SelectItem key={p} value={p}>
                                       {p}
                                     </SelectItem>
@@ -501,12 +550,17 @@ function LeadEditContent() {
                           )}
                         />
                         {errors.product && (
-                          <p className="text-destructive text-xs">{errors.product.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.product.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="leadSource" className="flex items-center text-sm">
+                        <Label
+                          htmlFor="leadSource"
+                          className="flex items-center text-sm"
+                        >
                           <Globe className="mr-1.5 h-3.5 w-3.5" />
                           Lead Source
                         </Label>
@@ -514,9 +568,11 @@ function LeadEditContent() {
                           name="leadSource"
                           control={control}
                           render={({ field }) => (
-                            <Select 
-                              key={`leadSource-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
-                              value={field.value} 
+                            <Select
+                              key={`leadSource-${
+                                current?.ReferenceTransaction_2361Id || "new"
+                              }-${field.value}`}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
@@ -528,7 +584,11 @@ function LeadEditContent() {
                                     Loading...
                                   </SelectItem>
                                 ) : (
-                                  (constants.data?.LeadSourceOutput.split(",") || []).map((s) => (
+                                  (
+                                    constants.data?.LeadSourceOutput.split(
+                                      ","
+                                    ) || []
+                                  ).map((s) => (
                                     <SelectItem key={s} value={s}>
                                       {s}
                                     </SelectItem>
@@ -539,14 +599,19 @@ function LeadEditContent() {
                           )}
                         />
                         {errors.leadSource && (
-                          <p className="text-destructive text-xs">{errors.leadSource.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.leadSource.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="timeFrame" className="flex items-center text-sm">
+                        <Label
+                          htmlFor="timeFrame"
+                          className="flex items-center text-sm"
+                        >
                           <Clock className="mr-1.5 h-3.5 w-3.5" />
                           Time Frame
                         </Label>
@@ -554,9 +619,11 @@ function LeadEditContent() {
                           name="timeFrame"
                           control={control}
                           render={({ field }) => (
-                            <Select 
-                              key={`timeFrame-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
-                              value={field.value} 
+                            <Select
+                              key={`timeFrame-${
+                                current?.ReferenceTransaction_2361Id || "new"
+                              }-${field.value}`}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
@@ -568,7 +635,11 @@ function LeadEditContent() {
                                     Loading...
                                   </SelectItem>
                                 ) : (
-                                  (constants.data?.TimeFrameOutput.split(",") || []).map((t) => (
+                                  (
+                                    constants.data?.TimeFrameOutput.split(
+                                      ","
+                                    ) || []
+                                  ).map((t) => (
                                     <SelectItem key={t} value={t}>
                                       {t}
                                     </SelectItem>
@@ -579,19 +650,28 @@ function LeadEditContent() {
                           )}
                         />
                         {errors.timeFrame && (
-                          <p className="text-destructive text-xs">{errors.timeFrame.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.timeFrame.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="customerApplication" className="text-sm">Application</Label>
+                        <Label
+                          htmlFor="customerApplication"
+                          className="text-sm"
+                        >
+                          Application
+                        </Label>
                         <Controller
                           name="customerApplication"
                           control={control}
                           render={({ field }) => (
-                            <Select 
-                              key={`customerApplication-${current?.ReferenceTransaction_2361Id || 'new'}-${field.value}`}
-                              value={field.value} 
+                            <Select
+                              key={`customerApplication-${
+                                current?.ReferenceTransaction_2361Id || "new"
+                              }-${field.value}`}
+                              value={field.value}
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
@@ -603,7 +683,11 @@ function LeadEditContent() {
                                     Loading...
                                   </SelectItem>
                                 ) : (
-                                  (constants.data?.ApplicationOutput.split(",") || []).map((a) => (
+                                  (
+                                    constants.data?.ApplicationOutput.split(
+                                      ","
+                                    ) || []
+                                  ).map((a) => (
                                     <SelectItem key={a} value={a}>
                                       {a}
                                     </SelectItem>
@@ -614,68 +698,91 @@ function LeadEditContent() {
                           )}
                         />
                         {errors.customerApplication && (
-                          <p className="text-destructive text-xs">{errors.customerApplication.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.customerApplication.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="competition" className="text-sm">Competition</Label>
-                        <Input 
-                          id="competition" 
-                          placeholder="Enter competition details" 
-                          {...register("competition")} 
+                        <Label htmlFor="competition" className="text-sm">
+                          Competition
+                        </Label>
+                        <Input
+                          id="competition"
+                          placeholder="Enter competition details"
+                          {...register("competition")}
                           className="h-9"
                         />
                         {errors.competition && (
-                          <p className="text-destructive text-xs">{errors.competition.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.competition.message}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="customerExistingMachine" className="text-sm">Existing Machine</Label>
-                        <Input 
-                          id="customerExistingMachine" 
-                          placeholder="Enter existing machine details" 
-                          {...register("customerExistingMachine")} 
+                        <Label
+                          htmlFor="customerExistingMachine"
+                          className="text-sm"
+                        >
+                          Existing Machine
+                        </Label>
+                        <Input
+                          id="customerExistingMachine"
+                          placeholder="Enter existing machine details"
+                          {...register("customerExistingMachine")}
                           className="h-9"
                         />
                         {errors.customerExistingMachine && (
-                          <p className="text-destructive text-xs">{errors.customerExistingMachine.message}</p>
+                          <p className="text-destructive text-xs">
+                            {errors.customerExistingMachine.message}
+                          </p>
                         )}
                       </div>
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="leadRemindDate" className="flex items-center text-sm">
+                      <Label
+                        htmlFor="leadRemindDate"
+                        className="flex items-center text-sm"
+                      >
                         <Calendar className="mr-1.5 h-3.5 w-3.5" />
                         Reminder Date
                       </Label>
-                      <Input 
-                        id="leadRemindDate" 
+                      <Input
+                        id="leadRemindDate"
                         type="date"
-                        {...register("leadRemindDate")} 
+                        {...register("leadRemindDate")}
                         className="h-9"
                       />
                       {errors.leadRemindDate && (
-                        <p className="text-destructive text-xs">{errors.leadRemindDate.message}</p>
+                        <p className="text-destructive text-xs">
+                          {errors.leadRemindDate.message}
+                        </p>
                       )}
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="leadNote" className="flex items-center text-sm">
+                      <Label
+                        htmlFor="leadNote"
+                        className="flex items-center text-sm"
+                      >
                         <FileText className="mr-1.5 h-3.5 w-3.5" />
                         Lead Notes
                       </Label>
-                      <Input 
-                        id="leadNote" 
-                        placeholder="Enter lead notes" 
-                        {...register("leadNote")} 
+                      <Input
+                        id="leadNote"
+                        placeholder="Enter lead notes"
+                        {...register("leadNote")}
                         className="h-9"
                       />
                       {errors.leadNote && (
-                        <p className="text-destructive text-xs">{errors.leadNote.message}</p>
+                        <p className="text-destructive text-xs">
+                          {errors.leadNote.message}
+                        </p>
                       )}
                     </div>
                   </CardContent>
@@ -691,77 +798,90 @@ function LeadEditContent() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {current.ImageName.split(",").filter(img => img.trim()).length > 0 ? (
+                      {current.ImageName.split(",").filter((img) => img.trim())
+                        .length > 0 ? (
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                          {current.ImageName.split(",").filter(img => img.trim()).map((imageName, index) => {
-                            const trimmedName = imageName.trim();
-                            const blobUrl = imageBlobUrls[trimmedName];
-                            const isLoading = !blobUrl;
-                            
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
-                              >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <div className="p-2 bg-primary/10 rounded-lg">
-                                  <FileText className="h-4 w-4 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">
-                                    {trimmedName || `Attachment ${index + 1}`}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {isLoading ? 'Loading...' : 'Uploaded file'}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  disabled={isLoading}
-                                  onClick={() => {
-                                    if (blobUrl) {
-                                      const imageIndex = availableImages.findIndex(name => name.trim() === trimmedName);
-                                      if (imageIndex !== -1) {
-                                        openModal(imageIndex);
-                                      }
-                                    }
-                                  }}
+                          {current.ImageName.split(",")
+                            .filter((img) => img.trim())
+                            .map((imageName, index) => {
+                              const trimmedName = imageName.trim();
+                              const blobUrl = imageBlobUrls[trimmedName];
+                              const isLoading = !blobUrl;
+
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                                 >
-                                  <Eye className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  disabled={isLoading}
-                                  onClick={() => {
-                                    if (blobUrl) {
-                                      const link = document.createElement('a');
-                                      link.href = blobUrl;
-                                      link.download = trimmedName;
-                                      document.body.appendChild(link);
-                                      link.click();
-                                      document.body.removeChild(link);
-                                    }
-                                  }}
-                                >
-                                  <Download className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                            );
-                          })}
+                                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                                    <div className="p-2 bg-primary/10 rounded-lg">
+                                      <FileText className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">
+                                        {trimmedName ||
+                                          `Attachment ${index + 1}`}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {isLoading
+                                          ? "Loading..."
+                                          : "Uploaded file"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      disabled={isLoading}
+                                      onClick={() => {
+                                        if (blobUrl) {
+                                          const imageIndex =
+                                            availableImages.findIndex(
+                                              (name) =>
+                                                name.trim() === trimmedName
+                                            );
+                                          if (imageIndex !== -1) {
+                                            openModal(imageIndex);
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      <Eye className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      disabled={isLoading}
+                                      onClick={() => {
+                                        if (blobUrl) {
+                                          const link =
+                                            document.createElement("a");
+                                          link.href = blobUrl;
+                                          link.download = trimmedName;
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
+                                        }
+                                      }}
+                                    >
+                                      <Download className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              );
+                            })}
                         </div>
                       ) : (
                         <div className="text-center py-6">
                           <Paperclip className="h-12 w-12 text-muted-foreground/50 mx-auto mb-2" />
-                          <p className="text-sm text-muted-foreground">No attachments found</p>
+                          <p className="text-sm text-muted-foreground">
+                            No attachments found
+                          </p>
                         </div>
                       )}
                     </CardContent>
@@ -769,17 +889,17 @@ function LeadEditContent() {
                 )}
 
                 <div className="flex gap-3">
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isSubmitting || updateLead.isPending}
                     className="gap-2"
                   >
                     <Save className="h-4 w-4" />
                     {updateLead.isPending ? "Updating..." : "Update Lead"}
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => router.back()}
                   >
                     Cancel
@@ -798,22 +918,25 @@ function LeadEditContent() {
             <DialogTitle className="flex items-center justify-between">
               <span className="flex items-center">
                 <Paperclip className="mr-2 h-5 w-5 text-primary" />
-                Attachment Gallery ({currentImageIndex + 1} of {availableImages.length})
+                Attachment Gallery ({currentImageIndex + 1} of{" "}
+                {availableImages.length})
               </span>
             </DialogTitle>
           </DialogHeader>
-          
+
           {availableImages.length > 0 && (
             <div className="relative flex-1 flex flex-col">
               {/* Main Image Display */}
               <div className="flex-1 flex items-center justify-center p-6 bg-muted/20">
                 <div className="relative max-w-full max-h-full">
                   <img
-                    src={imageBlobUrls[availableImages[currentImageIndex]?.trim()]}
+                    src={
+                      imageBlobUrls[availableImages[currentImageIndex]?.trim()]
+                    }
                     alt={`Attachment ${currentImageIndex + 1}`}
                     className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
                   />
-                  
+
                   {/* Navigation Arrows */}
                   {availableImages.length > 1 && (
                     <>
@@ -843,7 +966,8 @@ function LeadEditContent() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-lg">
-                      {availableImages[currentImageIndex]?.trim() || `Attachment ${currentImageIndex + 1}`}
+                      {availableImages[currentImageIndex]?.trim() ||
+                        `Attachment ${currentImageIndex + 1}`}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Click and drag to pan • Scroll to zoom
@@ -854,11 +978,16 @@ function LeadEditContent() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        const blobUrl = imageBlobUrls[availableImages[currentImageIndex]?.trim()];
+                        const blobUrl =
+                          imageBlobUrls[
+                            availableImages[currentImageIndex]?.trim()
+                          ];
                         if (blobUrl) {
-                          const link = document.createElement('a');
+                          const link = document.createElement("a");
                           link.href = blobUrl;
-                          link.download = availableImages[currentImageIndex]?.trim() || 'attachment';
+                          link.download =
+                            availableImages[currentImageIndex]?.trim() ||
+                            "attachment";
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
@@ -882,9 +1011,9 @@ function LeadEditContent() {
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
                           className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                            index === currentImageIndex 
-                              ? 'border-primary ring-2 ring-primary/20' 
-                              : 'border-muted hover:border-muted-foreground'
+                            index === currentImageIndex
+                              ? "border-primary ring-2 ring-primary/20"
+                              : "border-muted hover:border-muted-foreground"
                           }`}
                         >
                           <img
@@ -902,7 +1031,6 @@ function LeadEditContent() {
           )}
         </DialogContent>
       </Dialog>
-
     </SidebarProvider>
   );
 }
