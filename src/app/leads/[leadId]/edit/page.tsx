@@ -7,7 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem } from "@/components/ui/select";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useConstants } from "@/hooks/useConstants";
@@ -213,13 +219,22 @@ function LeadEditContent() {
                           name="currency"
                           control={control}
                           render={({ field }) => (
-                            <Select {...field}>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select currency" />
+                              </SelectTrigger>
                               <SelectContent>
-                                {(constants.data?.CurrencyOutput.split(",") || []).map((c) => (
-                                  <SelectItem key={c} value={c}>
-                                    {c}
+                                {constants.isLoading ? (
+                                  <SelectItem value="loading" disabled>
+                                    Loading...
                                   </SelectItem>
-                                ))}
+                                ) : (
+                                  (constants.data?.CurrencyOutput.split(",") || []).map((c) => (
+                                    <SelectItem key={c} value={c}>
+                                      {c}
+                                    </SelectItem>
+                                  ))
+                                )}
                               </SelectContent>
                             </Select>
                           )}
@@ -349,13 +364,22 @@ function LeadEditContent() {
                           name="product"
                           control={control}
                           render={({ field }) => (
-                            <Select {...field}>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select product" />
+                              </SelectTrigger>
                               <SelectContent>
-                                {(constants.data?.ProductOutput.split(",") || []).map((p) => (
-                                  <SelectItem key={p} value={p}>
-                                    {p}
+                                {constants.isLoading ? (
+                                  <SelectItem value="loading" disabled>
+                                    Loading...
                                   </SelectItem>
-                                ))}
+                                ) : (
+                                  (constants.data?.ProductOutput.split(",") || []).map((p) => (
+                                    <SelectItem key={p} value={p}>
+                                      {p}
+                                    </SelectItem>
+                                  ))
+                                )}
                               </SelectContent>
                             </Select>
                           )}
@@ -374,13 +398,22 @@ function LeadEditContent() {
                           name="leadSource"
                           control={control}
                           render={({ field }) => (
-                            <Select {...field}>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select lead source" />
+                              </SelectTrigger>
                               <SelectContent>
-                                {(constants.data?.LeadSourceOutput.split(",") || []).map((s) => (
-                                  <SelectItem key={s} value={s}>
-                                    {s}
+                                {constants.isLoading ? (
+                                  <SelectItem value="loading" disabled>
+                                    Loading...
                                   </SelectItem>
-                                ))}
+                                ) : (
+                                  (constants.data?.LeadSourceOutput.split(",") || []).map((s) => (
+                                    <SelectItem key={s} value={s}>
+                                      {s}
+                                    </SelectItem>
+                                  ))
+                                )}
                               </SelectContent>
                             </Select>
                           )}
@@ -401,13 +434,22 @@ function LeadEditContent() {
                           name="timeFrame"
                           control={control}
                           render={({ field }) => (
-                            <Select {...field}>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select time frame" />
+                              </SelectTrigger>
                               <SelectContent>
-                                {(constants.data?.TimeFrameOutput.split(",") || []).map((t) => (
-                                  <SelectItem key={t} value={t}>
-                                    {t}
+                                {constants.isLoading ? (
+                                  <SelectItem value="loading" disabled>
+                                    Loading...
                                   </SelectItem>
-                                ))}
+                                ) : (
+                                  (constants.data?.TimeFrameOutput.split(",") || []).map((t) => (
+                                    <SelectItem key={t} value={t}>
+                                      {t}
+                                    </SelectItem>
+                                  ))
+                                )}
                               </SelectContent>
                             </Select>
                           )}
@@ -423,13 +465,22 @@ function LeadEditContent() {
                           name="customerApplication"
                           control={control}
                           render={({ field }) => (
-                            <Select {...field}>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select application" />
+                              </SelectTrigger>
                               <SelectContent>
-                                {(constants.data?.ApplicationOutput.split(",") || []).map((a) => (
-                                  <SelectItem key={a} value={a}>
-                                    {a}
+                                {constants.isLoading ? (
+                                  <SelectItem value="loading" disabled>
+                                    Loading...
                                   </SelectItem>
-                                ))}
+                                ) : (
+                                  (constants.data?.ApplicationOutput.split(",") || []).map((a) => (
+                                    <SelectItem key={a} value={a}>
+                                      {a}
+                                    </SelectItem>
+                                  ))
+                                )}
                               </SelectContent>
                             </Select>
                           )}
