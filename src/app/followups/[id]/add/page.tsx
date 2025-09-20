@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -304,7 +305,7 @@ function AddFollowupContent() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="VisitTo" className="flex items-center gap-2">
+                      <Label htmlFor="VisitTo" className="flex items-center gap-2" {...getLabelProps(followupFormSchema, "VisitTo")}>
                         <User className="h-4 w-4" />
                         Communication With
                       </Label>
@@ -318,7 +319,7 @@ function AddFollowupContent() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="VisitorPerson" className="flex items-center gap-2">
+                      <Label htmlFor="VisitorPerson" className="flex items-center gap-2" {...getLabelProps(followupFormSchema, "VisitorPerson")}>
                         <User className="h-4 w-4" />
                         Communication By
                       </Label>
@@ -334,7 +335,7 @@ function AddFollowupContent() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="FollowupDetails" className="flex items-center gap-2">
+                    <Label htmlFor="FollowupDetails" className="flex items-center gap-2" {...getLabelProps(followupFormSchema, "FollowupDetails")}>
                       <FileText className="h-4 w-4" />
                       Follow Up Details
                     </Label>

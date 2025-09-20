@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { 
   Select, 
   SelectContent, 
@@ -66,16 +67,16 @@ const schema = z.object({
   contactPerson: z.string().min(1, "Contact Person is required"),
   designation: z.string().min(1, "Designation is required"),
   mobileNo: z.string().min(10, "Mobile must be at least 10 digits"),
-  address: z.string().min(1, "Address is required"),
+  address: z.string().optional(),
   emailId: z.string().email("Invalid email"),
   product: z.string().min(1, "Product is required"),
   leadSource: z.string().min(1, "Lead Source is required"),
-  competition: z.string().min(1, "Competition is required"),
+  competition: z.string().optional(),
   timeFrame: z.string().min(1, "Time Frame is required"),
-  leadRemindDate: z.date(),
-  customerApplication: z.string().min(1, "Customer Application is required"),
-  customerExistingMachine: z.string().min(1, "Customer Existing Machine is required"),
-  leadNote: z.string().min(1, "Lead Note is required"),
+  leadRemindDate: z.date().min(new Date(), "Reminder Date must be in the future"),
+  customerApplication: z.string().optional(),
+  customerExistingMachine: z.string().optional()  ,
+  leadNote: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -130,12 +131,10 @@ function AddLeadContent() {
       }
 
       await insertLead.mutateAsync(formData as any);
-      toast.success('Lead added successfully!');
       reset(); // Reset form after successful submission
       setFiles(null);
       router.push('/leads');
     } catch (error) {
-      toast.error('Failed to add lead');
       console.error(error);
     }
   };
@@ -207,7 +206,7 @@ function AddLeadContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="currency" className="text-sm">
+                        <Label htmlFor="currency" className="text-sm" {...getLabelProps(schema, "currency")}>
                           Currency
                         </Label>
                         <Controller
@@ -252,6 +251,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="customerCompanyName"
                           className="text-sm"
+                          {...getLabelProps(schema, "customerCompanyName")}
                         >
                           Company Name
                         </Label>
@@ -270,7 +270,7 @@ function AddLeadContent() {
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="address" className="text-sm">
+                      <Label htmlFor="address" className="text-sm" {...getLabelProps(schema, "address")}>
                         Address
                       </Label>
                       <Textarea
@@ -298,7 +298,7 @@ function AddLeadContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="contactPerson" className="text-sm">
+                        <Label htmlFor="contactPerson" className="text-sm" {...getLabelProps(schema, "contactPerson")}>
                           Contact Person
                         </Label>
                         <Input
@@ -315,7 +315,7 @@ function AddLeadContent() {
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="designation" className="text-sm">
+                        <Label htmlFor="designation" className="text-sm" {...getLabelProps(schema, "designation")}>
                           Designation
                         </Label>
                         <Input
@@ -337,6 +337,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="mobileNo"
                           className="flex items-center text-sm"
+                          {...getLabelProps(schema, "mobileNo")}
                         >
                           <Phone className="mr-1.5 h-3.5 w-3.5" />
                           Mobile Number
@@ -358,6 +359,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="emailId"
                           className="flex items-center text-sm"
+                          {...getLabelProps(schema, "emailId")}
                         >
                           <Mail className="mr-1.5 h-3.5 w-3.5" />
                           Email Address
@@ -392,6 +394,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="product"
                           className="flex items-center text-sm"
+                          {...getLabelProps(schema, "product")}
                         >
                           <Package className="mr-1.5 h-3.5 w-3.5" />
                           Product
@@ -437,6 +440,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="leadSource"
                           className="flex items-center text-sm"
+                          {...getLabelProps(schema, "leadSource")}
                         >
                           <Globe className="mr-1.5 h-3.5 w-3.5" />
                           Lead Source
@@ -485,6 +489,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="timeFrame"
                           className="flex items-center text-sm"
+                          {...getLabelProps(schema, "timeFrame")}
                         >
                           <Clock className="mr-1.5 h-3.5 w-3.5" />
                           Time Frame
@@ -531,6 +536,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="customerApplication"
                           className="text-sm"
+                          {...getLabelProps(schema, "customerApplication")}
                         >
                           Application
                         </Label>
@@ -575,7 +581,7 @@ function AddLeadContent() {
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="competition" className="text-sm">
+                        <Label htmlFor="competition" className="text-sm" {...getLabelProps(schema, "competition")}>
                           Competition
                         </Label>
                         <Input
@@ -595,6 +601,7 @@ function AddLeadContent() {
                         <Label
                           htmlFor="customerExistingMachine"
                           className="text-sm"
+                          {...getLabelProps(schema, "customerExistingMachine")}
                         >
                           Existing Machine
                         </Label>
@@ -616,6 +623,7 @@ function AddLeadContent() {
                       <Label
                         htmlFor="leadRemindDate"
                         className="flex items-center text-sm"
+                        {...getLabelProps(schema, "leadRemindDate")}
                       >
                         <Calendar className="mr-1.5 h-3.5 w-3.5" />
                         Reminder Date
@@ -637,6 +645,7 @@ function AddLeadContent() {
                       <Label
                         htmlFor="leadNote"
                         className="flex items-center text-sm"
+                        {...getLabelProps(schema, "leadNote")}
                       >
                         <FileText className="mr-1.5 h-3.5 w-3.5" />
                         Lead Notes

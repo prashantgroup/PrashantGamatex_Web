@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { LeadUpdate } from "@/types/lead";
 import Link from "next/link";
 import { useUserStore } from "@/store/store";
@@ -198,7 +199,7 @@ function AddNewLeadFollowupContent() {
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="grid gap-3">
-                  <Label className="flex items-center text-sm font-medium">
+                  <Label className="flex items-center text-sm font-medium" {...getLabelProps(schema, "VisitTo")}>
                     <User className="mr-1.5 h-4 w-4 text-muted-foreground" />
                     Communication With
                   </Label>
@@ -210,7 +211,7 @@ function AddNewLeadFollowupContent() {
                   {errors.VisitTo && <p className="text-destructive text-xs">{errors.VisitTo.message}</p>}
                 </div>
                 <div className="grid gap-3">
-                  <Label className="flex items-center text-sm font-medium">
+                  <Label className="flex items-center text-sm font-medium" {...getLabelProps(schema, "VisitorPerson")}>
                     <User className="mr-1.5 h-4 w-4 text-muted-foreground" />
                     Visitor
                   </Label>
@@ -224,7 +225,7 @@ function AddNewLeadFollowupContent() {
               </div>
               
               <div className="grid gap-3">
-                <Label className="flex items-center text-sm font-medium">
+                <Label className="flex items-center text-sm font-medium" {...getLabelProps(schema, "FollowupDetails")}>
                   <MessageSquare className="mr-1.5 h-4 w-4 text-muted-foreground" />
                   Follow-up Details
                 </Label>
@@ -299,7 +300,7 @@ function AddNewLeadFollowupContent() {
               </div>
               
               <div className="grid gap-3">
-                <Label className="flex items-center text-sm font-medium">
+                <Label className="flex items-center text-sm font-medium" {...getLabelProps(schema, "DetailDescription")}>
                   <FileText className="mr-1.5 h-4 w-4 text-muted-foreground" />
                   Detail Description
                 </Label>
@@ -312,7 +313,7 @@ function AddNewLeadFollowupContent() {
               </div>
               
               <div className="grid gap-3">
-                <Label className="flex items-center text-sm font-medium">
+                <Label className="flex items-center text-sm font-medium" {...getLabelProps(schema, "CloseReason")}>
                   <FileText className="mr-1.5 h-4 w-4 text-muted-foreground" />
                   Close Reason (if applicable)
                 </Label>

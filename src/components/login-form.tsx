@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { loginSchema, LoginFormData } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/useAuth";
@@ -75,7 +76,7 @@ export function LoginForm({
 
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username" {...getLabelProps(loginSchema, "username")}>Username</Label>
           <Input
             id="username"
             type="text"
@@ -89,7 +90,7 @@ export function LoginForm({
         </div>
 
         <div className="grid gap-3">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" {...getLabelProps(loginSchema, "password")}>Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -112,7 +113,7 @@ export function LoginForm({
         </div>
 
         <div className="grid gap-3">
-          <Label htmlFor="company">Company</Label>
+          <Label htmlFor="company" {...getLabelProps(loginSchema, "company")}>Company</Label>
           <Controller
             name="company"
             control={control}

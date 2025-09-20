@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { 
   Select, 
   SelectContent, 
@@ -71,16 +72,16 @@ const schema = z.object({
   contactPerson: z.string().min(1, "Contact Person is required"),
   designation: z.string().min(1, "Designation is required"),
   mobileNo: z.string().min(10, "Mobile must be at least 10 digits"),
-  address: z.string().min(1, "Address is required"),
+  address: z.string().optional(),
   emailId: z.string().email("Invalid email"),
   product: z.string().min(1, "Product is required"),
   leadSource: z.string().min(1, "Lead Source is required"),
-  competition: z.string().min(1, "Competition is required"),
+  competition: z.string().optional(),
   timeFrame: z.string().min(1, "Time Frame is required"),
   leadRemindDate: z.string().min(1, "Lead Remind Date is required"),
-  customerApplication: z.string().min(1, "Customer Application is required"),
-  customerExistingMachine: z.string().min(1, "Customer Existing Machine is required"),
-  leadNote: z.string().min(1, "Lead Note is required"),
+  customerApplication: z.string().optional(),
+  customerExistingMachine: z.string().optional(),
+  leadNote: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -325,7 +326,7 @@ function LeadEditContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="currency" className="text-sm">
+                        <Label htmlFor="currency" className="text-sm" {...getLabelProps(schema, "currency")}>
                           Currency
                         </Label>
                         <Controller
@@ -372,6 +373,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="customerCompanyName"
                           className="text-sm"
+                          {...getLabelProps(schema, "customerCompanyName")}
                         >
                           Company Name
                         </Label>
@@ -390,7 +392,7 @@ function LeadEditContent() {
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="address" className="text-sm">
+                      <Label htmlFor="address" className="text-sm" {...getLabelProps(schema, "address")}>
                         Address
                       </Label>
                       <Textarea
@@ -418,7 +420,7 @@ function LeadEditContent() {
                   <CardContent className="space-y-4">
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="contactPerson" className="text-sm">
+                        <Label htmlFor="contactPerson" className="text-sm" {...getLabelProps(schema, "contactPerson")}>
                           Contact Person
                         </Label>
                         <Input
@@ -435,7 +437,7 @@ function LeadEditContent() {
                       </div>
 
                       <div className="grid gap-2">
-                        <Label htmlFor="designation" className="text-sm">
+                        <Label htmlFor="designation" className="text-sm" required>
                           Designation
                         </Label>
                         <Input
@@ -457,6 +459,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="mobileNo"
                           className="flex items-center text-sm"
+                          required
                         >
                           <Phone className="mr-1.5 h-3.5 w-3.5" />
                           Mobile Number
@@ -478,6 +481,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="emailId"
                           className="flex items-center text-sm"
+                          required
                         >
                           <Mail className="mr-1.5 h-3.5 w-3.5" />
                           Email Address
@@ -512,6 +516,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="product"
                           className="flex items-center text-sm"
+                          required
                         >
                           <Package className="mr-1.5 h-3.5 w-3.5" />
                           Product
@@ -560,6 +565,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="leadSource"
                           className="flex items-center text-sm"
+                          required
                         >
                           <Globe className="mr-1.5 h-3.5 w-3.5" />
                           Lead Source
@@ -611,6 +617,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="timeFrame"
                           className="flex items-center text-sm"
+                          required
                         >
                           <Clock className="mr-1.5 h-3.5 w-3.5" />
                           Time Frame
@@ -660,6 +667,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="customerApplication"
                           className="text-sm"
+                          required
                         >
                           Application
                         </Label>
@@ -707,7 +715,7 @@ function LeadEditContent() {
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="competition" className="text-sm">
+                        <Label htmlFor="competition" className="text-sm" required>
                           Competition
                         </Label>
                         <Input
@@ -727,6 +735,7 @@ function LeadEditContent() {
                         <Label
                           htmlFor="customerExistingMachine"
                           className="text-sm"
+                          required
                         >
                           Existing Machine
                         </Label>
@@ -748,6 +757,7 @@ function LeadEditContent() {
                       <Label
                         htmlFor="leadRemindDate"
                         className="flex items-center text-sm"
+                        required
                       >
                         <Calendar className="mr-1.5 h-3.5 w-3.5" />
                         Reminder Date
@@ -769,6 +779,7 @@ function LeadEditContent() {
                       <Label
                         htmlFor="leadNote"
                         className="flex items-center text-sm"
+                        required
                       >
                         <FileText className="mr-1.5 h-3.5 w-3.5" />
                         Lead Notes

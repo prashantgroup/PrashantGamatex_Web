@@ -24,16 +24,16 @@ export type LeadUpdateData = {
   contactPerson: string;
   designation: string;
   mobileNo: string;
-  address: string;
+  address?: string;
   emailId: string;
   product: string;
   leadSource: string;
-  competition: string;
+  competition?: string;
   timeFrame: string;
   leadRemindDate: Date;
-  customerApplication: string;
-  customerExistingMachine: string;
-  leadNote: string;
+  customerApplication?: string;
+  customerExistingMachine?: string;
+  leadNote?: string;
 };
 
 export type LeadData = {

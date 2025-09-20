@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { getLabelProps } from "@/lib/form-utils";
 import { Card } from "@/components/ui/card";
 import { useExpenseInsert } from "@/hooks/useExpense";
 import { useConstants } from "@/hooks/useConstants";
@@ -129,7 +130,7 @@ function ExpensesAddContent() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
         <div className="grid gap-2">
-          <Label>Customer Company</Label>
+          <Label {...getLabelProps(schema, "customerCompany")}>Customer Company</Label>
           <Input placeholder="Company" {...register("customerCompany")} />
           {errors.customerCompany && (
             <p className="text-destructive text-sm">{errors.customerCompany.message}</p>
@@ -137,7 +138,7 @@ function ExpensesAddContent() {
         </div>
 
         <div className="grid gap-2">
-          <Label>Date of Visit</Label>
+          <Label {...getLabelProps(schema, "visitDate")}>Date of Visit</Label>
           <Input type="date" {...register("visitDate", { valueAsDate: true })} />
         </div>
 
@@ -146,7 +147,7 @@ function ExpensesAddContent() {
           {fields.map((field, index) => (
             <Card key={field.id} className="p-4 grid gap-3">
               <div className="grid gap-2">
-                <Label>Type</Label>
+                <Label {...getLabelProps(itemSchema, "type")}>Type</Label>
                 <select
                   className="border rounded h-10 px-3"
                   {...register(`expenseItems.${index}.type` as const)}
@@ -165,7 +166,7 @@ function ExpensesAddContent() {
                 )}
               </div>
               <div className="grid gap-2">
-                <Label>Amount</Label>
+                <Label {...getLabelProps(itemSchema, "amount")}>Amount</Label>
                 <Input
                   placeholder="0"
                   {...register(`expenseItems.${index}.amount` as const)}
@@ -177,7 +178,7 @@ function ExpensesAddContent() {
                 )}
               </div>
               <div className="grid gap-2">
-                <Label>Description</Label>
+                <Label {...getLabelProps(itemSchema, "description")}>Description</Label>
                 <Input
                   placeholder="Description"
                   {...register(`expenseItems.${index}.description` as const)}
