@@ -675,8 +675,7 @@ function AddLeadContent() {
                     disabled={isSubmitting || insertLead.isPending}
                     className="gap-2"
                   >
-                    <Plus className="h-4 w-4" />
-                    {insertLead.isPending ? "Adding..." : "Add Lead"}
+                    {insertLead.isPending ? "Submitting..." : "Submit"}
                   </Button>
                   <Button
                     type="button"

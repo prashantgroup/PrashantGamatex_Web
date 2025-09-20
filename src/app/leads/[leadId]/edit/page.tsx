@@ -894,8 +894,7 @@ function LeadEditContent() {
                     disabled={isSubmitting || updateLead.isPending}
                     className="gap-2"
                   >
-                    <Save className="h-4 w-4" />
-                    {updateLead.isPending ? "Updating..." : "Update Lead"}
+                    {updateLead.isPending ? "Submitting..." : "Submit"}
                   </Button>
                   <Button
                     type="button"
