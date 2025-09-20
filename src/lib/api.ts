@@ -43,7 +43,9 @@ client.interceptors.response.use(
     if (error.response?.status === 401 && typeof window !== 'undefined') {
       // Token is invalid or expired, clear user data
       localStorage.removeItem('userStore');
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

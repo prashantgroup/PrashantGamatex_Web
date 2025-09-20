@@ -14,9 +14,7 @@ export const useLogin = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   return useMutation<AuthResponse, ErrorResponse, LoginData>({
-    mutationFn: (data: LoginData) => {
-      return login(data);
-    },
+    mutationFn: login,
     onSuccess: (data) => {
       setUser({
         data: {
@@ -72,7 +70,9 @@ export const useAuth = () => {
     if (user && user.token) {
       setIsAuthenticated(true);
     } else {
-      router.push("/login");
+      if (window.location.pathname !== "/login") {
+        router.push("/login");
+      }
     }
   }, [user, router]);
 
