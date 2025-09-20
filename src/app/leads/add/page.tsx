@@ -212,10 +212,10 @@ function AddLeadContent() {
                         <Controller
                           name="currency"
                           control={control}
+                          defaultValue="Rs."
                           render={({ field }) => (
                             <Select
                               value={field.value}
-                              defaultValue="Rs."
                               onValueChange={field.onChange}
                             >
                               <SelectTrigger className="h-9">
