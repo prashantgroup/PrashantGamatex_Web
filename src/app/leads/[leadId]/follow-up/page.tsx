@@ -237,11 +237,11 @@ function AddNewLeadFollowupContent() {
                         <Calendar className="mr-1.5 h-4 w-4 text-muted-foreground" />
                         Follow Up Date & Time
                       </Label>
-                        <Input
-                          className="h-10"
-                          type="datetime-local"
-                          {...register("FollowupDateTime")}
-                        />
+                      <Input
+                        className="h-10"
+                        type="datetime-local"
+                        {...register("FollowupDateTime")}
+                      />
                       {errors.FollowupDateTime && (
                         <p className="text-destructive text-xs">
                           {errors.FollowupDateTime.message}
@@ -349,6 +349,10 @@ function AddNewLeadFollowupContent() {
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="Close" id="close" />
                           <Label htmlFor="close">Close</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="Offer" id="offer" />
+                          <Label htmlFor="offer">Offer</Label>
                         </div>
                       </RadioGroup>
 
